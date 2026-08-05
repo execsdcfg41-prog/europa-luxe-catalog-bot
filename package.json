@@ -1,0 +1,8 @@
+{
+  "name": "europa-luxe-catalog-bot",
+  "version": "1.0.0",
+  "dependencies": {
+    "googleapis": "^126.0.0",
+    "@upstash/redis": "^1.34.0"
+  }
+}
