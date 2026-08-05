@@ -21,6 +21,14 @@ const ADMIN_CHAT_IDS = (process.env.ADMIN_CHAT_IDS || '').split(',').map((s) => 
 const CLIENTS_SHEET = 'Клиенты';
 const CATALOG_SHEET = 'Каталог';
 const ORDERS_SHEET = 'Заказы';
+const STAFF_SHEET = 'Сотрудники';
+
+// Фиксированный список категорий для визарда добавления товара сотрудником.
+// Можно свободно редактировать этот список.
+const PRODUCT_CATEGORIES = [
+  'Куртка', 'Костюм', 'Пиджак', 'Брюки', 'Свитер',
+  'Рубашка', 'Обувь', 'Кепка', 'Ремень', 'Аксессуары',
+];
 
 const BRANCHES = [
   'Elegance Ц1',
@@ -80,6 +88,28 @@ const T = {
     chooseLang: 'Выберите язык интерфейса:',
     langSetRu: '✅ Язык изменён на русский.',
     langSetUz: "✅ Til o'zbekchaga o'zgartirildi.",
+    btnAddProduct: '➕ Добавить товар',
+    staffNoAccess: '⛔ У вас нет доступа к панели сотрудника.\n\nНапишите /staff, чтобы запросить доступ.',
+    staffRequestSent: '📨 Запрос на доступ отправлен администратору. Ждите подтверждения.',
+    staffAlreadyRequested: 'Запрос уже отправлен, ждите подтверждения администратора.',
+    staffAlreadyHasAccess: '✅ У вас уже есть доступ. Нажмите /start, чтобы открыть меню.',
+    staffApproved: (role) => `✅ Вам открыт доступ как «${role}». Нажмите /start, чтобы увидеть расширенное меню.`,
+    staffRejected: '⛔ В доступе отказано администратором.',
+    staffRequestNotify: (name, chatId) => `📨 Новый запрос доступа к панели сотрудника:\n\n👤 ${name}\n🆔 ${chatId}\n\nВыберите роль:`,
+    apChooseCategory: '➕ Добавление товара\n\nВыберите категорию:',
+    apChooseBrand: 'Введите название бренда:',
+    apChooseName: 'Введите название товара:',
+    apChooseDesc: 'Введите краткое описание товара (или отправьте "-", чтобы пропустить):',
+    apChoosePrice: 'Введите цену товара числом (например 850000):',
+    apInvalidPrice: '⚠️ Цена должна быть числом. Попробуйте ещё раз:',
+    apChoosePhotos: (n) => `📷 Отправьте фото товара${n ? ` (загружено: ${n})` : ''}.\n\nМожно отправить несколько фото по очереди. Когда закончите — нажмите «Готово».`,
+    apBtnDone: '✅ Готово',
+    apNeedOnePhoto: '⚠️ Нужно хотя бы одно фото. Отправьте фото товара:',
+    apConfirm: (p) => `Проверьте товар:\n\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
+    apBtnSave: '✅ Сохранить',
+    apBtnCancel: '❌ Отмена',
+    apSaved: '🎉 Товар добавлен в каталог!',
+    apCancelled: 'Добавление товара отменено.',
   },
   uz: {
     shareContact: '📱 Telefon raqamni yuborish',
@@ -128,6 +158,28 @@ const T = {
     chooseLang: 'Interfeys tilini tanlang:',
     langSetRu: '✅ Язык изменён на русский.',
     langSetUz: "✅ Til o'zbekchaga o'zgartirildi.",
+    btnAddProduct: '➕ Добавить товар',
+    staffNoAccess: '⛔ У вас нет доступа к панели сотрудника.\n\nНапишите /staff, чтобы запросить доступ.',
+    staffRequestSent: '📨 Запрос на доступ отправлен администратору. Ждите подтверждения.',
+    staffAlreadyRequested: 'Запрос уже отправлен, ждите подтверждения администратора.',
+    staffAlreadyHasAccess: '✅ У вас уже есть доступ. Нажмите /start, чтобы открыть меню.',
+    staffApproved: (role) => `✅ Вам открыт доступ как «${role}». Нажмите /start, чтобы увидеть расширенное меню.`,
+    staffRejected: '⛔ В доступе отказано администратором.',
+    staffRequestNotify: (name, chatId) => `📨 Новый запрос доступа к панели сотрудника:\n\n👤 ${name}\n🆔 ${chatId}\n\nВыберите роль:`,
+    apChooseCategory: '➕ Добавление товара\n\nВыберите категорию:',
+    apChooseBrand: 'Введите название бренда:',
+    apChooseName: 'Введите название товара:',
+    apChooseDesc: 'Введите краткое описание товара (или отправьте "-", чтобы пропустить):',
+    apChoosePrice: 'Введите цену товара числом (например 850000):',
+    apInvalidPrice: '⚠️ Цена должна быть числом. Попробуйте ещё раз:',
+    apChoosePhotos: (n) => `📷 Отправьте фото товара${n ? ` (загружено: ${n})` : ''}.\n\nМожно отправить несколько фото по очереди. Когда закончите — нажмите «Готово».`,
+    apBtnDone: '✅ Готово',
+    apNeedOnePhoto: '⚠️ Нужно хотя бы одно фото. Отправьте фото товара:',
+    apConfirm: (p) => `Проверьте товар:\n\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
+    apBtnSave: '✅ Сохранить',
+    apBtnCancel: '❌ Отмена',
+    apSaved: '🎉 Товар добавлен в каталог!',
+    apCancelled: 'Добавление товара отменено.',
   },
 };
 
@@ -176,6 +228,30 @@ async function clearState(chatId) {
   await redis.del(`catalog_state:${chatId}`);
 }
 
+// Состояние визарда "добавить товар" — отдельный ключ, чтобы не конфликтовать с оформлением заказа
+async function getApState(chatId) {
+  return (await redis.get(`catalog_apstate:${chatId}`)) || null;
+}
+async function setApState(chatId, state) {
+  await redis.set(`catalog_apstate:${chatId}`, state, { ex: 21600 });
+}
+async function clearApState(chatId) {
+  await redis.del(`catalog_apstate:${chatId}`);
+}
+
+// Кэш роли сотрудника (постоянно, обновляется при одобрении доступа).
+// Если в кэше пусто — проверяем лист "Сотрудники" напрямую (на случай ручного добавления строки).
+async function getStaffRoleCached(chatId) {
+  const cached = await redis.get(`catalog_staffrole:${chatId}`);
+  if (cached) return cached;
+  const fromSheet = await getStaffRole(chatId);
+  if (fromSheet) await setStaffRoleCached(chatId, fromSheet);
+  return fromSheet;
+}
+async function setStaffRoleCached(chatId, role) {
+  await redis.set(`catalog_staffrole:${chatId}`, role);
+}
+
 async function t(chatId, key, ...args) {
   const lang = await getLang(chatId);
   const val = T[lang][key];
@@ -212,6 +288,9 @@ async function ensureSheetsExist() {
   if (!titles.includes(ORDERS_SHEET)) {
     requests.push({ addSheet: { properties: { title: ORDERS_SHEET } } });
   }
+  if (!titles.includes(STAFF_SHEET)) {
+    requests.push({ addSheet: { properties: { title: STAFF_SHEET } } });
+  }
   if (requests.length) {
     await sheets.spreadsheets.batchUpdate({ spreadsheetId: SHEET_ID, requestBody: { requests } });
   }
@@ -229,6 +308,14 @@ async function ensureSheetsExist() {
       range: `${ORDERS_SHEET}!A1:H1`,
       valueInputOption: 'RAW',
       requestBody: { values: [['ID', 'Дата', 'Клиент', 'Телефон', 'Филиал', 'Товары', 'Итого', 'Статус']] },
+    });
+  }
+  if (!titles.includes(STAFF_SHEET)) {
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `${STAFF_SHEET}!A1:D1`,
+      valueInputOption: 'RAW',
+      requestBody: { values: [['chat_id', 'Имя', 'Роль', 'Дата']] },
     });
   }
 
@@ -267,6 +354,37 @@ async function addClientIfMissing(name, phone) {
     range: `${CLIENTS_SHEET}!A:E`,
     valueInputOption: 'RAW',
     requestBody: { values: [[new Date().toLocaleString('ru-RU'), name, phone, '-', 'новый клиент (бот-каталог)']] },
+  });
+}
+
+async function getStaffRole(chatId) {
+  const sheets = await getSheetsClient();
+  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${STAFF_SHEET}!A:D` });
+  const rows = (result.data.values || []).slice(1);
+  const row = rows.find((r) => String(r[0]) === String(chatId));
+  return row ? row[2] : null;
+}
+
+async function addStaff(chatId, name, role) {
+  const sheets = await getSheetsClient();
+  const date = new Date().toLocaleString('ru-RU');
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEET_ID,
+    range: `${STAFF_SHEET}!A:D`,
+    valueInputOption: 'RAW',
+    requestBody: { values: [[String(chatId), name, role, date]] },
+  });
+}
+
+async function addProductToSheet(product) {
+  const sheets = await getSheetsClient();
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEET_ID,
+    range: `${CATALOG_SHEET}!A:G`,
+    valueInputOption: 'RAW',
+    requestBody: {
+      values: [[product.brand, product.category, product.name, product.desc, product.price, product.photos.join(','), 'да']],
+    },
   });
 }
 
@@ -309,7 +427,7 @@ async function getAllProducts() {
       name: r[2],
       desc: r[3],
       price: Number(r[4]) || 0,
-      photoUrl: r[5],
+      photos: String(r[5] || '').split(',').map((s) => s.trim()).filter(Boolean),
       active: r[6],
     }))
     .filter((p) => p.name)
@@ -375,6 +493,14 @@ async function sendMessage(chatId, text, reply_markup) {
 async function sendPhoto(chatId, photo, caption, reply_markup) {
   await tg('sendPhoto', { chat_id: chatId, photo, caption, reply_markup });
 }
+async function sendMediaGroup(chatId, photos, caption) {
+  const media = photos.map((photo, i) => ({
+    type: 'photo',
+    media: photo,
+    ...(i === 0 ? { caption } : {}),
+  }));
+  await tg('sendMediaGroup', { chat_id: chatId, media });
+}
 async function editMessageText(chatId, message_id, text, reply_markup) {
   await tg('editMessageText', { chat_id: chatId, message_id, text, reply_markup });
 }
@@ -385,13 +511,15 @@ async function answerCallbackQuery(id) {
 // ==================== КЛАВИАТУРЫ ====================
 
 async function mainMenuKeyboard(chatId) {
-  return {
-    keyboard: [
-      [{ text: await t(chatId, 'btnCatalog') }, { text: await t(chatId, 'btnCart') }],
-      [{ text: await t(chatId, 'btnMyOrders') }, { text: await t(chatId, 'btnLang') }],
-    ],
-    resize_keyboard: true,
-  };
+  const rows = [
+    [{ text: await t(chatId, 'btnCatalog') }, { text: await t(chatId, 'btnCart') }],
+    [{ text: await t(chatId, 'btnMyOrders') }, { text: await t(chatId, 'btnLang') }],
+  ];
+  const role = await getStaffRoleCached(chatId);
+  if (role === 'сотрудник' || role === 'редактор') {
+    rows.push([{ text: await t(chatId, 'btnAddProduct') }]);
+  }
+  return { keyboard: rows, resize_keyboard: true };
 }
 
 // ==================== ХЕНДЛЕРЫ ====================
@@ -400,7 +528,134 @@ async function handleReset(chatId) {
   await clearProfile(chatId);
   await clearCart(chatId);
   await clearState(chatId);
+  await clearApState(chatId);
   await sendMessage(chatId, await t(chatId, 'resetDone'), { remove_keyboard: true });
+}
+
+async function handleStaffRequest(chatId, fromUser) {
+  const existingRole = await getStaffRoleCached(chatId);
+  if (existingRole) {
+    await sendMessage(chatId, await t(chatId, 'staffAlreadyHasAccess'));
+    return;
+  }
+  const pending = await redis.get(`catalog_staffpending:${chatId}`);
+  if (pending) {
+    await sendMessage(chatId, await t(chatId, 'staffAlreadyRequested'));
+    return;
+  }
+  const name = [fromUser.first_name, fromUser.last_name].filter(Boolean).join(' ').trim() || fromUser.username || String(chatId);
+  await redis.set(`catalog_staffpending:${chatId}`, name, { ex: 86400 });
+  await sendMessage(chatId, await t(chatId, 'staffRequestSent'));
+  const notify = await t(chatId, 'staffRequestNotify', name, chatId);
+  const keyboard = {
+    inline_keyboard: [[
+      { text: '✅ Сотрудник', callback_data: 'staffreq_approve_staff_' + chatId },
+      { text: '✏️ Редактор', callback_data: 'staffreq_approve_editor_' + chatId },
+    ], [
+      { text: '❌ Отклонить', callback_data: 'staffreq_reject_' + chatId },
+    ]],
+  };
+  for (const adminId of ADMIN_CHAT_IDS) await sendMessage(adminId, notify, keyboard);
+}
+
+async function handleStaffDecision(adminChatId, data) {
+  let action, targetChatId;
+  if (data.startsWith('staffreq_approve_staff_')) {
+    action = 'staff';
+    targetChatId = data.slice('staffreq_approve_staff_'.length);
+  } else if (data.startsWith('staffreq_approve_editor_')) {
+    action = 'editor';
+    targetChatId = data.slice('staffreq_approve_editor_'.length);
+  } else if (data.startsWith('staffreq_reject_')) {
+    action = 'reject';
+    targetChatId = data.slice('staffreq_reject_'.length);
+  } else {
+    return;
+  }
+
+  const name = (await redis.get(`catalog_staffpending:${targetChatId}`)) || String(targetChatId);
+  await redis.del(`catalog_staffpending:${targetChatId}`);
+
+  if (action === 'reject') {
+    await sendMessage(targetChatId, await t(targetChatId, 'staffRejected'));
+    await sendMessage(adminChatId, `❌ Отказано: ${name}`);
+    return;
+  }
+
+  const role = action === 'editor' ? 'редактор' : 'сотрудник';
+  await addStaff(targetChatId, name, role);
+  await setStaffRoleCached(targetChatId, role);
+  await sendMessage(targetChatId, await t(targetChatId, 'staffApproved', role));
+  await sendMessage(adminChatId, `✅ ${name} теперь «${role}»`);
+}
+
+async function startAddProduct(chatId) {
+  await setApState(chatId, { step: 'category' });
+  const rows = PRODUCT_CATEGORIES.map((c) => [{ text: c, callback_data: 'apcat_' + encodeURIComponent(c) }]);
+  await sendMessage(chatId, await t(chatId, 'apChooseCategory'), { inline_keyboard: rows });
+}
+
+async function handleApCategory(chatId, category) {
+  await setApState(chatId, { step: 'brand', category });
+  await sendMessage(chatId, await t(chatId, 'apChooseBrand'));
+}
+
+async function handleApText(chatId, text, apState) {
+  if (apState.step === 'brand') {
+    await setApState(chatId, { ...apState, step: 'name', brand: text.trim() });
+    await sendMessage(chatId, await t(chatId, 'apChooseName'));
+  } else if (apState.step === 'name') {
+    await setApState(chatId, { ...apState, step: 'desc', name: text.trim() });
+    await sendMessage(chatId, await t(chatId, 'apChooseDesc'));
+  } else if (apState.step === 'desc') {
+    const desc = text.trim() === '-' ? '' : text.trim();
+    await setApState(chatId, { ...apState, step: 'price', desc });
+    await sendMessage(chatId, await t(chatId, 'apChoosePrice'));
+  } else if (apState.step === 'price') {
+    const price = Number(text.replace(/\D/g, ''));
+    if (!price) {
+      await sendMessage(chatId, await t(chatId, 'apInvalidPrice'));
+      return;
+    }
+    await setApState(chatId, { ...apState, step: 'photos', price, photos: [] });
+    await sendMessage(chatId, await t(chatId, 'apChoosePhotos', 0));
+  }
+}
+
+async function handleApPhoto(chatId, fileId, apState) {
+  const photos = [...(apState.photos || []), fileId];
+  await setApState(chatId, { ...apState, photos });
+  await sendMessage(chatId, await t(chatId, 'apChoosePhotos', photos.length), {
+    inline_keyboard: [[{ text: await t(chatId, 'apBtnDone'), callback_data: 'apphotos_done' }]],
+  });
+}
+
+async function handleApPhotosDone(chatId, apState) {
+  if (!apState.photos || !apState.photos.length) {
+    await sendMessage(chatId, await t(chatId, 'apNeedOnePhoto'));
+    return;
+  }
+  await setApState(chatId, { ...apState, step: 'confirm' });
+  const caption = await t(chatId, 'apConfirm', apState);
+  await sendPhoto(chatId, apState.photos[0], caption, {
+    inline_keyboard: [[
+      { text: await t(chatId, 'apBtnSave'), callback_data: 'apconfirm_save' },
+      { text: await t(chatId, 'apBtnCancel'), callback_data: 'apconfirm_cancel' },
+    ]],
+  });
+}
+
+async function handleApSave(chatId, apState) {
+  await addProductToSheet(apState);
+  await clearApState(chatId);
+  await sendMessage(chatId, await t(chatId, 'apSaved'));
+  await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+}
+
+async function handleApCancel(chatId) {
+  await clearApState(chatId);
+  await sendMessage(chatId, await t(chatId, 'apCancelled'));
+  await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
 }
 
 async function handleStart(chatId) {
@@ -433,12 +688,23 @@ async function handleText(chatId, text) {
   const profile = await getProfile(chatId);
   if (!profile || !profile.phone) return handleStart(chatId);
 
+  // Если сотрудник в процессе добавления товара — текст обрабатывается визардом, а не меню
+  const apState = await getApState(chatId);
+  if (apState && ['brand', 'name', 'desc', 'price'].includes(apState.step)) {
+    return handleApText(chatId, text, apState);
+  }
+
   const lang = await getLang(chatId);
   const other = lang === 'ru' ? 'uz' : 'ru';
 
   if (text === T.ru.btnCatalog || text === T.uz.btnCatalog) return showCatalogEntry(chatId);
   if (text === T.ru.btnCart || text === T.uz.btnCart) return showCart(chatId);
   if (text === T.ru.btnMyOrders || text === T.uz.btnMyOrders) return showMyOrders(chatId);
+  if (text === T.ru.btnAddProduct) {
+    const role = await getStaffRoleCached(chatId);
+    if (role === 'сотрудник' || role === 'редактор') return startAddProduct(chatId);
+    return sendMessage(chatId, await t(chatId, 'staffNoAccess'));
+  }
   if (text === T.ru.btnLang || text === T.uz.btnLang) {
     return sendMessage(chatId, await t(chatId, 'chooseLang'), {
       inline_keyboard: [[
@@ -527,8 +793,14 @@ async function showProduct(chatId, productId) {
     ],
   };
   const caption = await t(chatId, 'productCard', p);
-  if (p.photoUrl) await sendPhoto(chatId, p.photoUrl, caption, keyboard);
-  else await sendMessage(chatId, caption, keyboard);
+  if (p.photos.length > 1) {
+    await sendMediaGroup(chatId, p.photos, caption);
+    await sendMessage(chatId, p.name, keyboard);
+  } else if (p.photos.length === 1) {
+    await sendPhoto(chatId, p.photos[0], caption, keyboard);
+  } else {
+    await sendMessage(chatId, caption, keyboard);
+  }
 }
 
 async function showCart(chatId, editMsgId) {
@@ -624,6 +896,18 @@ async function handleCallback(cq) {
     await setLang(chatId, lang);
     await sendMessage(chatId, lang === 'ru' ? T.ru.langSetRu : T.uz.langSetUz);
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+  } else if (data.startsWith('staffreq_')) {
+    await handleStaffDecision(chatId, data);
+  } else if (data.startsWith('apcat_')) {
+    await handleApCategory(chatId, decodeURIComponent(data.slice(6)));
+  } else if (data === 'apphotos_done') {
+    const apState = await getApState(chatId);
+    if (apState) await handleApPhotosDone(chatId, apState);
+  } else if (data === 'apconfirm_save') {
+    const apState = await getApState(chatId);
+    if (apState) await handleApSave(chatId, apState);
+  } else if (data === 'apconfirm_cancel') {
+    await handleApCancel(chatId);
   } else if (data === 'catalog_entry') {
     await showCatalogEntry(chatId, messageId);
   } else if (data === 'view_brand') {
@@ -680,10 +964,23 @@ module.exports = async (req, res) => {
     if (update.message) {
       const msg = update.message;
       const chatId = msg.chat.id;
-      if (msg.contact) await handleContact(chatId, msg.contact);
-      else if (msg.text === '/start') await handleStart(chatId);
-      else if (msg.text === '/reset') await handleReset(chatId);
-      else if (msg.text) await handleText(chatId, msg.text);
+      if (msg.photo) {
+        const apState = await getApState(chatId);
+        if (apState && apState.step === 'photos') {
+          const fileId = msg.photo[msg.photo.length - 1].file_id; // самое крупное разрешение
+          await handleApPhoto(chatId, fileId, apState);
+        }
+      } else if (msg.contact) {
+        await handleContact(chatId, msg.contact);
+      } else if (msg.text === '/start') {
+        await handleStart(chatId);
+      } else if (msg.text === '/reset') {
+        await handleReset(chatId);
+      } else if (msg.text === '/staff') {
+        await handleStaffRequest(chatId, msg.from);
+      } else if (msg.text) {
+        await handleText(chatId, msg.text);
+      }
     } else if (update.callback_query) {
       await handleCallback(update.callback_query);
     }
