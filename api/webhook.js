@@ -596,7 +596,7 @@ async function handleStaffDecision(adminChatId, data) {
 
 async function startAddProduct(chatId) {
   await setApState(chatId, { step: 'category' });
-  const rows = PRODUCT_CATEGORIES.map((c) => [{ text: c, callback_data: 'apcat_' + encodeURIComponent(c) }]);
+  const rows = PRODUCT_CATEGORIES.map((c, i) => [{ text: c, callback_data: 'apcat_' + i }]);
   await sendMessage(chatId, await t(chatId, 'apChooseCategory'), { inline_keyboard: rows });
 }
 
@@ -747,8 +747,8 @@ async function showBrands(chatId, editMsgId) {
 async function showBrandCategories(chatId, brand, editMsgId) {
   const categories = await getCategoriesForBrand(brand);
   if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
-  const rows = categories.map((c) => [
-    { text: c, callback_data: 'bc_' + encodeURIComponent(brand) + '::' + encodeURIComponent(c) },
+  const rows = categories.map((c, i) => [
+    { text: c, callback_data: 'bc_' + encodeURIComponent(brand) + '::' + i },
   ]);
   rows.push([{ text: await t(chatId, 'backToBrands'), callback_data: 'view_brand' }]);
   const keyboard = { inline_keyboard: rows };
@@ -770,7 +770,7 @@ async function showBrandCategoryProducts(chatId, brand, category, editMsgId) {
 async function showCategories(chatId, editMsgId) {
   const categories = await getCategories();
   if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
-  const rows = categories.map((c) => [{ text: c, callback_data: 'cat_' + encodeURIComponent(c) }]);
+  const rows = categories.map((c, i) => [{ text: c, callback_data: 'cat_' + i }]);
   rows.push([{ text: await t(chatId, 'backToEntry'), callback_data: 'catalog_entry' }]);
   const keyboard = { inline_keyboard: rows };
   const text = await t(chatId, 'chooseCategory');
@@ -904,7 +904,9 @@ async function handleCallback(cq) {
   } else if (data.startsWith('staffreq_')) {
     await handleStaffDecision(chatId, data);
   } else if (data.startsWith('apcat_')) {
-    await handleApCategory(chatId, decodeURIComponent(data.slice(6)));
+    const idx = Number(data.slice(6));
+    const category = PRODUCT_CATEGORIES[idx];
+    if (category) await handleApCategory(chatId, category);
   } else if (data === 'apphotos_done') {
     const apState = await getApState(chatId);
     if (apState) await handleApPhotosDone(chatId, apState);
@@ -922,10 +924,15 @@ async function handleCallback(cq) {
   } else if (data.startsWith('brand_')) {
     await showBrandCategories(chatId, decodeURIComponent(data.slice(6)), messageId);
   } else if (data.startsWith('bc_')) {
-    const [encBrand, encCategory] = data.slice(3).split('::');
-    await showBrandCategoryProducts(chatId, decodeURIComponent(encBrand), decodeURIComponent(encCategory), messageId);
+    const [encBrand, idxStr] = data.slice(3).split('::');
+    const brand = decodeURIComponent(encBrand);
+    const categories = await getCategoriesForBrand(brand);
+    const category = categories[Number(idxStr)];
+    if (category) await showBrandCategoryProducts(chatId, brand, category, messageId);
   } else if (data.startsWith('cat_')) {
-    await showProducts(chatId, decodeURIComponent(data.slice(4)), messageId);
+    const categories = await getCategories();
+    const category = categories[Number(data.slice(4))];
+    if (category) await showProducts(chatId, category, messageId);
   } else if (data.startsWith('prod_')) {
     await showProduct(chatId, data.slice(5));
   } else if (data.startsWith('add_')) {
