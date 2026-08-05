@@ -36,6 +36,7 @@ const T = {
   ru: {
     shareContact: '📱 Отправить номер телефона',
     askContact: '👋 Добро пожаловать в Europa Luxe & Elegance!\n\nЧтобы открыть каталог, поделитесь номером телефона:',
+    resetDone: '🔄 Готово, забыл ваш номер. Напишите /start, чтобы привязать бота заново.',
     contactSaved: (name) => `✅ Спасибо${name ? ', ' + name : ''}! Теперь вам доступен каталог.`,
     mainMenu: 'Главное меню. Что хотите сделать?',
     btnCatalog: '📖 Каталог',
@@ -75,6 +76,7 @@ const T = {
   uz: {
     shareContact: '📱 Telefon raqamni yuborish',
     askContact: "👋 Europa Luxe & Elegance botiga xush kelibsiz!\n\nKatalogni ochish uchun telefon raqamingizni ulashing:",
+    resetDone: "🔄 Tayyor, raqamingizni unutdim. Botni qayta ulash uchun /start yozing.",
     contactSaved: (name) => `✅ Rahmat${name ? ', ' + name : ''}! Endi katalog sizga ochiq.`,
     mainMenu: 'Asosiy menyu. Nima qilmoqchisiz?',
     btnCatalog: '📖 Katalog',
@@ -126,6 +128,9 @@ async function getProfile(chatId) {
 }
 async function setProfile(chatId, profile) {
   await redis.set(`catalog_profile:${chatId}`, profile);
+}
+async function clearProfile(chatId) {
+  await redis.del(`catalog_profile:${chatId}`);
 }
 
 async function getLang(chatId) {
@@ -342,6 +347,13 @@ async function mainMenuKeyboard(chatId) {
 }
 
 // ==================== ХЕНДЛЕРЫ ====================
+
+async function handleReset(chatId) {
+  await clearProfile(chatId);
+  await clearCart(chatId);
+  await clearState(chatId);
+  await sendMessage(chatId, await t(chatId, 'resetDone'), { remove_keyboard: true });
+}
 
 async function handleStart(chatId) {
   const profile = await getProfile(chatId);
@@ -563,6 +575,7 @@ module.exports = async (req, res) => {
       const chatId = msg.chat.id;
       if (msg.contact) await handleContact(chatId, msg.contact);
       else if (msg.text === '/start') await handleStart(chatId);
+      else if (msg.text === '/reset') await handleReset(chatId);
       else if (msg.text) await handleText(chatId, msg.text);
     } else if (update.callback_query) {
       await handleCallback(update.callback_query);
