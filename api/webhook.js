@@ -218,9 +218,9 @@ async function ensureSheetsExist() {
   if (!titles.includes(CATALOG_SHEET)) {
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: `${CATALOG_SHEET}!A1:H1`,
+      range: `${CATALOG_SHEET}!A1:G1`,
       valueInputOption: 'RAW',
-      requestBody: { values: [['ID', 'Бренд', 'Категория', 'Название', 'Описание', 'Цена', 'Фото (URL)', 'Активен']] },
+      requestBody: { values: [['Бренд', 'Категория', 'Название', 'Описание', 'Цена', 'Фото (URL)', 'Активен']] },
     });
   }
   if (!titles.includes(ORDERS_SHEET)) {
@@ -299,23 +299,24 @@ async function getCategoriesForBrand(brand) {
 
 async function getAllProducts() {
   const sheets = await getSheetsClient();
-  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!A:H` });
+  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!A:G` });
   const rows = (result.data.values || []).slice(1);
   return rows
-    .filter((r) => r[0])
-    .filter((r) => {
-      const active = String(r[7] || '').toLowerCase();
+    .map((r, i) => ({
+      id: String(i + 2), // номер строки в таблице (после заголовка) служит ID товара
+      brand: r[0],
+      category: r[1],
+      name: r[2],
+      desc: r[3],
+      price: Number(r[4]) || 0,
+      photoUrl: r[5],
+      active: r[6],
+    }))
+    .filter((p) => p.name)
+    .filter((p) => {
+      const active = String(p.active || '').toLowerCase();
       return active === '' || active === 'да' || active === 'ha' || active === 'true';
-    })
-    .map((r) => ({
-      id: String(r[0]),
-      brand: r[1],
-      category: r[2],
-      name: r[3],
-      desc: r[4],
-      price: Number(r[5]) || 0,
-      photoUrl: r[6],
-    }));
+    });
 }
 
 async function getProductsByCategory(category) {
