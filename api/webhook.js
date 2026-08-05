@@ -480,11 +480,16 @@ async function getOrdersByPhone(phone) {
 // ==================== TELEGRAM API ====================
 
 async function tg(method, payload) {
-  await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
+  const res = await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
+  const data = await res.json().catch(() => null);
+  if (!data || !data.ok) {
+    console.error(`Telegram API error [${method}]:`, JSON.stringify(data), 'payload:', JSON.stringify(payload));
+  }
+  return data;
 }
 
 async function sendMessage(chatId, text, reply_markup) {
