@@ -45,11 +45,19 @@ const T = {
     btnLang: '🌐 Язык / Til',
     chooseCategory: '📖 Выберите категорию:',
     noCategories: 'Каталог пока пуст. Загляните позже.',
+    chooseViewMode: '📖 Как хотите посмотреть товары?',
+    btnByBrand: '🏷 По брендам',
+    btnByCategory: '📂 По категориям',
+    chooseBrand: '🏷 Выберите бренд:',
+    noBrands: 'Бренды пока не добавлены.',
+    chooseBrandCategory: (brand) => `Бренд: ${brand}\nВыберите категорию:`,
+    backToBrands: '⬅️ К брендам',
+    backToEntry: '⬅️ Назад',
     chooseProduct: (cat) => `Категория: ${cat}\nВыберите товар:`,
     backToCategories: '⬅️ К категориям',
     addToCart: '🛒 Добавить в корзину',
     addedToCart: (name) => `✅ «${name}» добавлен в корзину.`,
-    productCard: (p) => `🛍 ${p.name}\n\n${p.desc ? p.desc + '\n\n' : ''}💵 ${formatPrice(p.price)}`,
+    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc ? p.desc + '\n\n' : ''}💵 ${formatPrice(p.price)}`,
     cartEmpty: '🛒 Корзина пуста.\n\nЗагляните в каталог, чтобы что-то выбрать.',
     cartHeader: '🛒 Ваша корзина:\n\n',
     cartLine: (name, qty, sum) => `• ${name} × ${qty} = ${formatPrice(sum)}`,
@@ -85,11 +93,19 @@ const T = {
     btnLang: '🌐 Til / Язык',
     chooseCategory: '📖 Kategoriyani tanlang:',
     noCategories: "Katalog hozircha bo'sh. Keyinroq qayting.",
+    chooseViewMode: '📖 Mahsulotlarni qanday ko\'rishni xohlaysiz?',
+    btnByBrand: '🏷 Brendlar bo\'yicha',
+    btnByCategory: '📂 Kategoriyalar bo\'yicha',
+    chooseBrand: '🏷 Brendni tanlang:',
+    noBrands: "Brendlar hali qo'shilmagan.",
+    chooseBrandCategory: (brand) => `Brend: ${brand}\nKategoriyani tanlang:`,
+    backToBrands: '⬅️ Brendlarga',
+    backToEntry: '⬅️ Orqaga',
     chooseProduct: (cat) => `Kategoriya: ${cat}\nMahsulotni tanlang:`,
     backToCategories: '⬅️ Kategoriyalarga',
     addToCart: "🛒 Savatga qo'shish",
     addedToCart: (name) => `✅ «${name}» savatga qo'shildi.`,
-    productCard: (p) => `🛍 ${p.name}\n\n${p.desc ? p.desc + '\n\n' : ''}💵 ${formatPrice(p.price)}`,
+    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc ? p.desc + '\n\n' : ''}💵 ${formatPrice(p.price)}`,
     cartEmpty: "🛒 Savat bo'sh.\n\nKatalogdan mahsulot tanlang.",
     cartHeader: '🛒 Sizning savatingiz:\n\n',
     cartLine: (name, qty, sum) => `• ${name} × ${qty} = ${formatPrice(sum)}`,
@@ -202,9 +218,9 @@ async function ensureSheetsExist() {
   if (!titles.includes(CATALOG_SHEET)) {
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: `${CATALOG_SHEET}!A1:G1`,
+      range: `${CATALOG_SHEET}!A1:H1`,
       valueInputOption: 'RAW',
-      requestBody: { values: [['ID', 'Категория', 'Название', 'Описание', 'Цена', 'Фото (URL)', 'Активен']] },
+      requestBody: { values: [['ID', 'Бренд', 'Категория', 'Название', 'Описание', 'Цена', 'Фото (URL)', 'Активен']] },
     });
   }
   if (!titles.includes(ORDERS_SHEET)) {
@@ -255,30 +271,61 @@ async function addClientIfMissing(name, phone) {
 }
 
 async function getCategories() {
-  const sheets = await getSheetsClient();
-  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!A:G` });
-  const rows = (result.data.values || []).slice(1);
+  const all = await getAllProducts();
   const cats = [];
-  rows.forEach((r) => {
-    const active = String(r[6] || '').toLowerCase();
-    const isActive = active === '' || active === 'да' || active === 'ha' || active === 'true';
-    if (r[1] && isActive && !cats.includes(r[1])) cats.push(r[1]);
+  all.forEach((p) => {
+    if (p.category && !cats.includes(p.category)) cats.push(p.category);
+  });
+  return cats;
+}
+
+async function getBrands() {
+  const all = await getAllProducts();
+  const brands = [];
+  all.forEach((p) => {
+    if (p.brand && !brands.includes(p.brand)) brands.push(p.brand);
+  });
+  return brands;
+}
+
+async function getCategoriesForBrand(brand) {
+  const all = await getAllProducts();
+  const cats = [];
+  all.forEach((p) => {
+    if (p.brand === brand && p.category && !cats.includes(p.category)) cats.push(p.category);
   });
   return cats;
 }
 
 async function getAllProducts() {
   const sheets = await getSheetsClient();
-  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!A:G` });
+  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!A:H` });
   const rows = (result.data.values || []).slice(1);
   return rows
     .filter((r) => r[0])
-    .map((r) => ({ id: String(r[0]), category: r[1], name: r[2], desc: r[3], price: Number(r[4]) || 0, photoUrl: r[5] }));
+    .filter((r) => {
+      const active = String(r[7] || '').toLowerCase();
+      return active === '' || active === 'да' || active === 'ha' || active === 'true';
+    })
+    .map((r) => ({
+      id: String(r[0]),
+      brand: r[1],
+      category: r[2],
+      name: r[3],
+      desc: r[4],
+      price: Number(r[5]) || 0,
+      photoUrl: r[6],
+    }));
 }
 
 async function getProductsByCategory(category) {
   const all = await getAllProducts();
   return all.filter((p) => p.category === category);
+}
+
+async function getProductsByBrandCategory(brand, category) {
+  const all = await getAllProducts();
+  return all.filter((p) => p.brand === brand && p.category === category);
 }
 
 async function getProductById(id) {
@@ -388,7 +435,7 @@ async function handleText(chatId, text) {
   const lang = await getLang(chatId);
   const other = lang === 'ru' ? 'uz' : 'ru';
 
-  if (text === T.ru.btnCatalog || text === T.uz.btnCatalog) return showCategories(chatId);
+  if (text === T.ru.btnCatalog || text === T.uz.btnCatalog) return showCatalogEntry(chatId);
   if (text === T.ru.btnCart || text === T.uz.btnCart) return showCart(chatId);
   if (text === T.ru.btnMyOrders || text === T.uz.btnMyOrders) return showMyOrders(chatId);
   if (text === T.ru.btnLang || text === T.uz.btnLang) {
@@ -402,10 +449,58 @@ async function handleText(chatId, text) {
   await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
 }
 
+async function showCatalogEntry(chatId, editMsgId) {
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: await t(chatId, 'btnByBrand'), callback_data: 'view_brand' }],
+      [{ text: await t(chatId, 'btnByCategory'), callback_data: 'view_category' }],
+    ],
+  };
+  const text = await t(chatId, 'chooseViewMode');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showBrands(chatId, editMsgId) {
+  const brands = await getBrands();
+  if (!brands.length) return sendMessage(chatId, await t(chatId, 'noBrands'));
+  const rows = brands.map((b) => [{ text: b, callback_data: 'brand_' + encodeURIComponent(b) }]);
+  rows.push([{ text: await t(chatId, 'backToEntry'), callback_data: 'catalog_entry' }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'chooseBrand');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showBrandCategories(chatId, brand, editMsgId) {
+  const categories = await getCategoriesForBrand(brand);
+  if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
+  const rows = categories.map((c) => [
+    { text: c, callback_data: 'bc_' + encodeURIComponent(brand) + '::' + encodeURIComponent(c) },
+  ]);
+  rows.push([{ text: await t(chatId, 'backToBrands'), callback_data: 'view_brand' }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'chooseBrandCategory', brand);
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showBrandCategoryProducts(chatId, brand, category, editMsgId) {
+  const products = await getProductsByBrandCategory(brand, category);
+  const rows = products.map((p) => [{ text: `${p.name} — ${formatPrice(p.price)}`, callback_data: 'prod_' + p.id }]);
+  rows.push([{ text: await t(chatId, 'backToBrands'), callback_data: 'brand_' + encodeURIComponent(brand) }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'chooseProduct', category);
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
 async function showCategories(chatId, editMsgId) {
   const categories = await getCategories();
   if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
-  const keyboard = { inline_keyboard: categories.map((c) => [{ text: c, callback_data: 'cat_' + encodeURIComponent(c) }]) };
+  const rows = categories.map((c) => [{ text: c, callback_data: 'cat_' + encodeURIComponent(c) }]);
+  rows.push([{ text: await t(chatId, 'backToEntry'), callback_data: 'catalog_entry' }]);
+  const keyboard = { inline_keyboard: rows };
   const text = await t(chatId, 'chooseCategory');
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
@@ -427,7 +522,7 @@ async function showProduct(chatId, productId) {
   const keyboard = {
     inline_keyboard: [
       [{ text: await t(chatId, 'addToCart'), callback_data: 'add_' + p.id }],
-      [{ text: await t(chatId, 'backToCategories'), callback_data: 'cat_' + encodeURIComponent(p.category) }],
+      [{ text: await t(chatId, 'backToEntry'), callback_data: 'catalog_entry' }],
     ],
   };
   const caption = await t(chatId, 'productCard', p);
@@ -528,6 +623,17 @@ async function handleCallback(cq) {
     await setLang(chatId, lang);
     await sendMessage(chatId, lang === 'ru' ? T.ru.langSetRu : T.uz.langSetUz);
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+  } else if (data === 'catalog_entry') {
+    await showCatalogEntry(chatId, messageId);
+  } else if (data === 'view_brand') {
+    await showBrands(chatId, messageId);
+  } else if (data === 'view_category') {
+    await showCategories(chatId, messageId);
+  } else if (data.startsWith('brand_')) {
+    await showBrandCategories(chatId, decodeURIComponent(data.slice(6)), messageId);
+  } else if (data.startsWith('bc_')) {
+    const [encBrand, encCategory] = data.slice(3).split('::');
+    await showBrandCategoryProducts(chatId, decodeURIComponent(encBrand), decodeURIComponent(encCategory), messageId);
   } else if (data.startsWith('cat_')) {
     await showProducts(chatId, decodeURIComponent(data.slice(4)), messageId);
   } else if (data.startsWith('prod_')) {
