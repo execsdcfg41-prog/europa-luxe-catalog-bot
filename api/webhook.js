@@ -152,6 +152,11 @@ const T = {
     adminDeleted: (name) => `🗑 «${name}» удалён из каталога.`,
     adminCollectionsTitle: '🗂 Коллекции',
     adminBtnAddCollection: '➕ Добавить коллекцию',
+    adminBtnDeleteCollection: '🗑 Удалить коллекцию',
+    adminChooseCollectionToDelete: 'Выберите коллекцию для удаления:',
+    adminCollectionHasProducts: (name, count) => `⚠️ Нельзя удалить «${name}» — в ней ещё ${count} товар(ов). Сначала удалите или перенесите их в другую коллекцию (через лист «Каталог» или админ-панель → Товары).`,
+    adminConfirmDeleteCollection: (name) => `Точно удалить коллекцию «${name}»? В ней нет товаров, действие необратимо.`,
+    adminCollectionDeleted: (name) => `🗑 Коллекция «${name}» удалена.`,
     adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
@@ -252,6 +257,11 @@ const T = {
     adminDeleted: (name) => `🗑 «${name}» удалён из каталога.`,
     adminCollectionsTitle: '🗂 Коллекции',
     adminBtnAddCollection: '➕ Добавить коллекцию',
+    adminBtnDeleteCollection: '🗑 Удалить коллекцию',
+    adminChooseCollectionToDelete: 'Выберите коллекцию для удаления:',
+    adminCollectionHasProducts: (name, count) => `⚠️ Нельзя удалить «${name}» — в ней ещё ${count} товар(ов). Сначала удалите или перенесите их в другую коллекцию (через лист «Каталог» или админ-панель → Товары).`,
+    adminConfirmDeleteCollection: (name) => `Точно удалить коллекцию «${name}»? В ней нет товаров, действие необратимо.`,
+    adminCollectionDeleted: (name) => `🗑 Коллекция «${name}» удалена.`,
     adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
@@ -346,6 +356,15 @@ async function addCollection(name) {
     list.push(name);
     await redis.set('catalog_collections', list);
   }
+}
+async function removeCollection(name) {
+  const list = await getCollections();
+  const next = list.filter((c) => c !== name);
+  await redis.set('catalog_collections', next);
+}
+async function countProductsInCollection(name) {
+  const all = await getAllProducts();
+  return all.filter((p) => p.collection === name).length;
 }
 
 // Выбранная клиентом коллекция на время просмотра каталога (6 часов)
@@ -1359,16 +1378,59 @@ async function showAdminCollections(chatId, editMsgId) {
   const collections = await getCollections();
   let text = await t(chatId, 'adminCollectionsTitle');
   text += collections.length
-    ? '\n\n' + collections.map((c, i) => `${i + 1}. ${c}`).join('\n')
+    ? '\n\n' + collections.map((c, i) => `${i + 1}. ${esc(c)}`).join('\n')
     : '\n\n' + (await t(chatId, 'noCollections'));
   const keyboard = {
     inline_keyboard: [
       [{ text: await t(chatId, 'adminBtnAddCollection'), callback_data: 'adm_addcoll' }],
+      [{ text: await t(chatId, 'adminBtnDeleteCollection'), callback_data: 'adm_delcoll_list' }],
       [{ text: await t(chatId, 'adminBackToMenu'), callback_data: 'adm_menu' }],
     ],
   };
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
+}
+
+async function showAdminDeleteCollectionList(chatId, editMsgId) {
+  const collections = await getCollections();
+  if (!collections.length) return sendMessage(chatId, await t(chatId, 'noCollections'));
+  const rows = collections.map((c, i) => [{ text: c, callback_data: 'adm_delcoll_' + i }]);
+  rows.push([{ text: await t(chatId, 'adminBackToMenu'), callback_data: 'adm_collections' }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'adminChooseCollectionToDelete');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function handleAdminDeleteCollectionRequest(chatId, idx) {
+  const collections = await getCollections();
+  const name = collections[idx];
+  if (!name) return;
+  const count = await countProductsInCollection(name);
+  if (count > 0) {
+    await sendMessage(chatId, await t(chatId, 'adminCollectionHasProducts', name, count));
+    return;
+  }
+  await sendMessage(chatId, await t(chatId, 'adminConfirmDeleteCollection', name), {
+    inline_keyboard: [[
+      { text: await t(chatId, 'adminBtnDeleteYes'), callback_data: 'adm_delcollyes_' + idx },
+      { text: await t(chatId, 'adminBtnDeleteNo'), callback_data: 'adm_collections' },
+    ]],
+  });
+}
+
+async function handleAdminDeleteCollectionConfirm(chatId, idx) {
+  const collections = await getCollections();
+  const name = collections[idx];
+  if (!name) return;
+  const count = await countProductsInCollection(name);
+  if (count > 0) {
+    await sendMessage(chatId, await t(chatId, 'adminCollectionHasProducts', name, count));
+    return;
+  }
+  await removeCollection(name);
+  await sendMessage(chatId, await t(chatId, 'adminCollectionDeleted', name));
+  await showAdminCollections(chatId);
 }
 
 async function handleCallback(cq) {
@@ -1483,6 +1545,12 @@ async function handleCallback(cq) {
       await setAdminState(chatId, { step: 'addcoll' });
       await sendMessage(chatId, await t(chatId, 'adminAddCollectionPrompt'));
     }
+  } else if (data === 'adm_delcoll_list') {
+    if (await isAdmin(chatId)) await showAdminDeleteCollectionList(chatId, messageId);
+  } else if (data.startsWith('adm_delcollyes_')) {
+    if (await isAdmin(chatId)) await handleAdminDeleteCollectionConfirm(chatId, Number(data.slice(15)));
+  } else if (data.startsWith('adm_delcoll_')) {
+    if (await isAdmin(chatId)) await handleAdminDeleteCollectionRequest(chatId, Number(data.slice(12)));
   } else if (data === 'adm_addadmin') {
     if (isSuperAdmin(chatId)) await handleAdminGenerateInvite(chatId);
   } else if (data.startsWith('admgrant_yes_')) {
