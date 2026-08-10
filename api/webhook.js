@@ -22,6 +22,7 @@ const CLIENTS_SHEET = 'Клиенты';
 const CATALOG_SHEET = 'Каталог';
 const ORDERS_SHEET = 'Заказы';
 const STAFF_SHEET = 'Сотрудники';
+const SELLERS_SHEET = 'Продавцы';
 
 // Фиксированный список категорий для визарда добавления товара сотрудником.
 const PRODUCT_CATEGORIES = [
@@ -85,6 +86,11 @@ const T = {
     cartHeader: '🛒 Ваша корзина:\n\n',
     cartLine: (name, qty) => `• ${name} × ${qty}`,
     btnCheckout: '✅ Оформить заказ',
+    btnContactSeller: '📞 Связаться с продавцом',
+    sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах и свяжется с вами.',
+    sellerNotifiedGeneric: '✅ Мы получили информацию о выбранных товарах, с вами свяжутся.',
+    btnMessageSeller: (name) => `💬 Написать ${name}`,
+    sellerNotifyText: (name, phone, itemsText) => `🛍 Клиент интересуется товарами:\n\n👤 ${name}\n📞 ${phone}\n\n${itemsText}`,
     btnClearCart: '🗑 Очистить корзину',
     btnRemoveItem: (name) => `❌ Убрать: ${name}`,
     cartCleared: '🗑 Корзина очищена.',
@@ -180,6 +186,11 @@ const T = {
     cartHeader: '🛒 Sizning savatingiz:\n\n',
     cartLine: (name, qty) => `• ${name} × ${qty}`,
     btnCheckout: '✅ Buyurtma berish',
+    btnContactSeller: '📞 Связаться с продавцом',
+    sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах и свяжется с вами.',
+    sellerNotifiedGeneric: '✅ Мы получили информацию о выбранных товарах, с вами свяжутся.',
+    btnMessageSeller: (name) => `💬 Написать ${name}`,
+    sellerNotifyText: (name, phone, itemsText) => `🛍 Клиент интересуется товарами:\n\n👤 ${name}\n📞 ${phone}\n\n${itemsText}`,
     btnClearCart: '🗑 Savatni tozalash',
     btnRemoveItem: (name) => `❌ O'chirish: ${name}`,
     cartCleared: "🗑 Savat tozalandi.",
@@ -424,6 +435,9 @@ async function ensureSheetsExist() {
   if (!titles.includes(STAFF_SHEET)) {
     requests.push({ addSheet: { properties: { title: STAFF_SHEET } } });
   }
+  if (!titles.includes(SELLERS_SHEET)) {
+    requests.push({ addSheet: { properties: { title: SELLERS_SHEET } } });
+  }
   if (requests.length) {
     await sheets.spreadsheets.batchUpdate({ spreadsheetId: SHEET_ID, requestBody: { requests } });
   }
@@ -449,6 +463,14 @@ async function ensureSheetsExist() {
       range: `${STAFF_SHEET}!A1:D1`,
       valueInputOption: 'RAW',
       requestBody: { values: [['chat_id', 'Имя', 'Роль', 'Дата']] },
+    });
+  }
+  if (!titles.includes(SELLERS_SHEET)) {
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `${SELLERS_SHEET}!A1:C1`,
+      valueInputOption: 'RAW',
+      requestBody: { values: [['Имя (как в листе Клиенты)', 'chat_id', 'Username (необязательно)']] },
     });
   }
 
@@ -486,10 +508,20 @@ async function findClientByPhone(phone) {
   const targetDigits = digitsOnly(phone);
   for (let i = 1; i < rows.length; i++) {
     if (digitsOnly(rows[i][2]) === targetDigits) {
-      return { name: rows[i][1] || '', phone: rows[i][2] || phone };
+      return { name: rows[i][1] || '', phone: rows[i][2] || phone, sellerName: (rows[i][4] || '').trim() };
     }
   }
   return null;
+}
+
+async function getSellerByName(name) {
+  if (!name) return null;
+  const sheets = await getSheetsClient();
+  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${SELLERS_SHEET}!A:C` });
+  const rows = (result.data.values || []).slice(1);
+  const row = rows.find((r) => (r[0] || '').trim() === name.trim());
+  if (!row || !row[1]) return null;
+  return { chatId: row[1], username: (row[2] || '').trim() || null };
 }
 
 async function addClientIfMissing(name, phone) {
@@ -944,7 +976,7 @@ async function handleContact(chatId, contact) {
   const displayName = existing ? existing.name || name : name;
   if (!existing) await addClientIfMissing(name, phone);
 
-  await setProfile(chatId, { phone, name: displayName });
+  await setProfile(chatId, { phone, name: displayName, sellerName: existing ? existing.sellerName : '' });
   await sendMessage(chatId, await t(chatId, 'contactSaved', displayName), { remove_keyboard: true });
   await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
 }
@@ -1153,12 +1185,39 @@ async function showCart(chatId, editMsgId) {
     text += (await t(chatId, 'cartLine', p.name, qty)) + '\n';
     rows.push([{ text: await t(chatId, 'btnRemoveItem', p.name), callback_data: 'rm_' + id }]);
   }
-  rows.push([{ text: await t(chatId, 'btnCheckout'), callback_data: 'checkout_start' }]);
+  rows.push([{ text: await t(chatId, 'btnContactSeller'), callback_data: 'contact_seller' }]);
   rows.push([{ text: await t(chatId, 'btnClearCart'), callback_data: 'clear_cart' }]);
 
   const keyboard = { inline_keyboard: rows };
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
+}
+
+async function handleContactSeller(chatId) {
+  const cart = await getCart(chatId);
+  if (!Object.keys(cart).length) return sendMessage(chatId, await t(chatId, 'cartEmpty'));
+
+  const profile = await getProfile(chatId);
+  let itemsText = '';
+  for (const id of Object.keys(cart)) {
+    const p = await getProductById(id);
+    if (!p) continue;
+    itemsText += `• ${p.name}${p.brand ? ' (' + p.brand + ')' : ''} × ${cart[id]}\n`;
+  }
+
+  const seller = profile.sellerName ? await getSellerByName(profile.sellerName) : null;
+  const notifyText = await t(chatId, 'sellerNotifyText', profile.name, profile.phone, itemsText);
+
+  if (seller && seller.chatId) {
+    await sendMessage(seller.chatId, notifyText);
+    const keyboard = seller.username
+      ? { inline_keyboard: [[{ text: await t(chatId, 'btnMessageSeller', profile.sellerName), url: `https://t.me/${seller.username}` }]] }
+      : undefined;
+    await sendMessage(chatId, await t(chatId, 'sellerNotified'), keyboard);
+  } else {
+    for (const adminId of ADMIN_CHAT_IDS) await sendMessage(adminId, notifyText);
+    await sendMessage(chatId, await t(chatId, 'sellerNotifiedGeneric'));
+  }
 }
 
 async function startCheckout(chatId) {
@@ -1388,6 +1447,8 @@ async function handleCallback(cq) {
     await clearCart(chatId);
     await sendMessage(chatId, await t(chatId, 'cartCleared'));
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+  } else if (data === 'contact_seller') {
+    await handleContactSeller(chatId);
   } else if (data === 'checkout_start') {
     await startCheckout(chatId);
   } else if (data.startsWith('branch_')) {
