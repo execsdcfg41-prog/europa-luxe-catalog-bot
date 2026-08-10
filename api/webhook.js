@@ -58,39 +58,39 @@ const BRANCHES = [
 const T = {
   ru: {
     shareContact: '📱 Отправить номер телефона',
-    askContact: '👋 Добро пожаловать в Europa Luxe & Elegance!\n\nЧтобы открыть каталог, поделитесь номером телефона:',
+    askContact: '👋 <b>Добро пожаловать в Europa Luxe &amp; Elegance!</b>\n\nЭксклюзивный каталог премиальных брендов — прямо в этом чате.\n\nЧтобы открыть каталог, поделитесь номером телефона 👇',
     resetDone: '🔄 Готово, забыл ваш номер. Напишите /start, чтобы привязать бота заново.',
-    contactSaved: (name) => `✅ Спасибо${name ? ', ' + name : ''}! Теперь вам доступен каталог.`,
-    mainMenu: 'Главное меню. Что хотите сделать?',
+    contactSaved: (name) => `✅ Спасибо${name ? ', <b>' + esc(name) + '</b>' : ''}! Каталог открыт.`,
+    mainMenu: '✨ <b>Главное меню</b>\n\nЧто хотите сделать?',
     btnCatalog: '📖 Каталог',
     btnCart: '🛒 Корзина',
     btnMyOrders: '📦 Мои заказы',
     btnLang: '🌐 Язык / Til',
-    chooseCategory: '📖 Выберите категорию:',
+    chooseCategory: '📖 <b>Выберите категорию:</b>',
     noCategories: 'Каталог пока пуст. Загляните позже.',
-    chooseViewMode: '📖 Как хотите посмотреть товары?',
+    chooseViewMode: '📖 <b>Как хотите посмотреть товары?</b>',
     btnByBrand: '🏷 По брендам',
     btnByCategory: '📂 По категориям',
-    chooseBrand: '🏷 Выберите бренд:',
+    chooseBrand: '🏷 <b>Выберите бренд:</b>',
     noBrands: 'Бренды пока не добавлены.',
-    chooseBrandCategory: (brand) => `Бренд: ${brand}\nВыберите категорию:`,
-    chooseCategoryBrand: (category) => `Категория: ${category}\nВыберите бренд:`,
+    chooseBrandCategory: (brand) => `🏷 <b>${esc(brand)}</b>\nВыберите категорию:`,
+    chooseCategoryBrand: (category) => `📂 <b>${esc(category)}</b>\nВыберите бренд:`,
     backToBrands: '⬅️ К брендам',
     backToEntry: '⬅️ Назад',
-    chooseProduct: (cat) => `${cat}\nВыберите товар:`,
+    chooseProduct: (cat) => `<b>${esc(cat)}</b>\nВыберите товар:`,
     backToCategories: '⬅️ К категориям',
     addToCart: '🛒 Добавить в корзину',
-    addedToCart: (name) => `✅ «${name}» добавлен в корзину.`,
-    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc || ''}`,
+    addedToCart: (name) => `✅ «<b>${esc(name)}</b>» добавлен в корзину.`,
+    productCard: (p) => `🛍 <b>${esc(p.name)}</b>${p.brand ? '\n🏷 ' + esc(p.brand) : ''}\n\n${esc(p.desc || '')}`,
     cartEmpty: '🛒 Корзина пуста.\n\nЗагляните в каталог, чтобы что-то выбрать.',
-    cartHeader: '🛒 Ваша корзина:\n\n',
-    cartLine: (name, qty) => `• ${name} × ${qty}`,
+    cartHeader: '🛒 <b>Ваша корзина</b>\n\n',
+    cartLine: (name, qty) => `▫️ ${esc(name)} <b>× ${qty}</b>`,
     btnCheckout: '✅ Оформить заказ',
     btnContactSeller: '📞 Связаться с продавцом',
     sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах и свяжется с вами.',
     sellerNotifiedGeneric: '✅ Мы получили информацию о выбранных товарах, с вами свяжутся.',
     btnMessageSeller: (name) => `💬 Написать ${name}`,
-    sellerNotifyText: (name, phone, itemsText) => `🛍 Клиент интересуется товарами:\n\n👤 ${name}\n📞 ${phone}\n\n${itemsText}`,
+    sellerNotifyText: (name, phone, itemsText) => `🛍 <b>Клиент интересуется товарами</b>\n\n👤 ${esc(name)}\n📞 ${esc(phone)}\n\n${itemsText}`,
     btnClearCart: '🗑 Очистить корзину',
     btnRemoveItem: (name) => `❌ Убрать: ${name}`,
     cartCleared: '🗑 Корзина очищена.',
@@ -132,9 +132,9 @@ const T = {
     apCancelled: 'Добавление товара отменено.',
     apChooseCollection: 'Выберите коллекцию:',
     apNoCollections: '⚠️ Коллекции ещё не добавлены. Попросите администратора добавить хотя бы одну через «⚙️ Админ → 🗂 Коллекции».',
-    chooseCollection: '📦 Выберите коллекцию:',
+    chooseCollection: '📦 <b>Выберите коллекцию:</b>',
     noCollections: 'Коллекции пока не добавлены.',
-    chooseViewModeColl: (coll) => `📦 Коллекция: ${coll}\n\nКак хотите посмотреть товары?`,
+    chooseViewModeColl: (coll) => `📦 <b>${esc(coll)}</b>\n\nКак хотите посмотреть товары?`,
     btnChangeCollection: '🔄 Сменить коллекцию',
     btnAdmin: '⚙️ Админ',
     adminMenuTitle: '⚙️ Админ-панель',
@@ -158,39 +158,39 @@ const T = {
   },
   uz: {
     shareContact: '📱 Telefon raqamni yuborish',
-    askContact: "👋 Europa Luxe & Elegance botiga xush kelibsiz!\n\nKatalogni ochish uchun telefon raqamingizni ulashing:",
+    askContact: "👋 <b>Europa Luxe &amp; Elegance botiga xush kelibsiz!</b>\n\nPremium brendlar katalogi — shu chatda.\n\nKatalogni ochish uchun telefon raqamingizni ulashing 👇",
     resetDone: "🔄 Tayyor, raqamingizni unutdim. Botni qayta ulash uchun /start yozing.",
-    contactSaved: (name) => `✅ Rahmat${name ? ', ' + name : ''}! Endi katalog sizga ochiq.`,
-    mainMenu: 'Asosiy menyu. Nima qilmoqchisiz?',
+    contactSaved: (name) => `✅ Rahmat${name ? ', <b>' + esc(name) + '</b>' : ''}! Katalog ochiq.`,
+    mainMenu: '✨ <b>Asosiy menyu</b>\n\nNima qilmoqchisiz?',
     btnCatalog: '📖 Katalog',
     btnCart: '🛒 Savat',
     btnMyOrders: '📦 Buyurtmalarim',
     btnLang: '🌐 Til / Язык',
-    chooseCategory: '📖 Kategoriyani tanlang:',
+    chooseCategory: '📖 <b>Kategoriyani tanlang:</b>',
     noCategories: "Katalog hozircha bo'sh. Keyinroq qayting.",
-    chooseViewMode: '📖 Mahsulotlarni qanday ko\'rishni xohlaysiz?',
+    chooseViewMode: '📖 <b>Mahsulotlarni qanday ko\'rishni xohlaysiz?</b>',
     btnByBrand: '🏷 Brendlar bo\'yicha',
     btnByCategory: '📂 Kategoriyalar bo\'yicha',
-    chooseBrand: '🏷 Brendni tanlang:',
+    chooseBrand: '🏷 <b>Brendni tanlang:</b>',
     noBrands: "Brendlar hali qo'shilmagan.",
-    chooseBrandCategory: (brand) => `Brend: ${brand}\nKategoriyani tanlang:`,
-    chooseCategoryBrand: (category) => `Kategoriya: ${category}\nBrendni tanlang:`,
+    chooseBrandCategory: (brand) => `🏷 <b>${esc(brand)}</b>\nKategoriyani tanlang:`,
+    chooseCategoryBrand: (category) => `📂 <b>${esc(category)}</b>\nBrendni tanlang:`,
     backToBrands: '⬅️ Brendlarga',
     backToEntry: '⬅️ Orqaga',
-    chooseProduct: (cat) => `${cat}\nMahsulotni tanlang:`,
+    chooseProduct: (cat) => `<b>${esc(cat)}</b>\nMahsulotni tanlang:`,
     backToCategories: '⬅️ Kategoriyalarga',
     addToCart: "🛒 Savatga qo'shish",
-    addedToCart: (name) => `✅ «${name}» savatga qo'shildi.`,
-    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc || ''}`,
+    addedToCart: (name) => `✅ «<b>${esc(name)}</b>» savatga qo'shildi.`,
+    productCard: (p) => `🛍 <b>${esc(p.name)}</b>${p.brand ? '\n🏷 ' + esc(p.brand) : ''}\n\n${esc(p.desc || '')}`,
     cartEmpty: "🛒 Savat bo'sh.\n\nKatalogdan mahsulot tanlang.",
-    cartHeader: '🛒 Sizning savatingiz:\n\n',
-    cartLine: (name, qty) => `• ${name} × ${qty}`,
+    cartHeader: '🛒 <b>Sizning savatingiz</b>\n\n',
+    cartLine: (name, qty) => `▫️ ${esc(name)} <b>× ${qty}</b>`,
     btnCheckout: '✅ Buyurtma berish',
     btnContactSeller: '📞 Связаться с продавцом',
     sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах и свяжется с вами.',
     sellerNotifiedGeneric: '✅ Мы получили информацию о выбранных товарах, с вами свяжутся.',
     btnMessageSeller: (name) => `💬 Написать ${name}`,
-    sellerNotifyText: (name, phone, itemsText) => `🛍 Клиент интересуется товарами:\n\n👤 ${name}\n📞 ${phone}\n\n${itemsText}`,
+    sellerNotifyText: (name, phone, itemsText) => `🛍 <b>Клиент интересуется товарами</b>\n\n👤 ${esc(name)}\n📞 ${esc(phone)}\n\n${itemsText}`,
     btnClearCart: '🗑 Savatni tozalash',
     btnRemoveItem: (name) => `❌ O'chirish: ${name}`,
     cartCleared: "🗑 Savat tozalandi.",
@@ -232,9 +232,9 @@ const T = {
     apCancelled: 'Добавление товара отменено.',
     apChooseCollection: 'Выберите коллекцию:',
     apNoCollections: '⚠️ Коллекции ещё не добавлены. Попросите администратора добавить хотя бы одну через «⚙️ Админ → 🗂 Коллекции».',
-    chooseCollection: '📦 Выберите коллекцию:',
+    chooseCollection: '📦 <b>Выберите коллекцию:</b>',
     noCollections: 'Коллекции пока не добавлены.',
-    chooseViewModeColl: (coll) => `📦 Коллекция: ${coll}\n\nКак хотите посмотреть товары?`,
+    chooseViewModeColl: (coll) => `📦 <b>${esc(coll)}</b>\n\nКак хотите посмотреть товары?`,
     btnChangeCollection: '🔄 Сменить коллекцию',
     btnAdmin: '⚙️ Админ',
     adminMenuTitle: '⚙️ Админ-панель',
@@ -687,24 +687,29 @@ async function tg(method, payload) {
 }
 
 async function sendMessage(chatId, text, reply_markup) {
-  await tg('sendMessage', { chat_id: chatId, text, reply_markup });
+  await tg('sendMessage', { chat_id: chatId, text, reply_markup, parse_mode: 'HTML' });
 }
 async function sendPhoto(chatId, photo, caption, reply_markup) {
-  await tg('sendPhoto', { chat_id: chatId, photo, caption, reply_markup });
+  await tg('sendPhoto', { chat_id: chatId, photo, caption, reply_markup, parse_mode: 'HTML' });
 }
 async function sendMediaGroup(chatId, photos, caption) {
   const media = photos.map((photo, i) => ({
     type: 'photo',
     media: photo,
-    ...(i === 0 ? { caption } : {}),
+    ...(i === 0 ? { caption, parse_mode: 'HTML' } : {}),
   }));
   await tg('sendMediaGroup', { chat_id: chatId, media });
 }
 async function editMessageText(chatId, message_id, text, reply_markup) {
-  await tg('editMessageText', { chat_id: chatId, message_id, text, reply_markup });
+  await tg('editMessageText', { chat_id: chatId, message_id, text, reply_markup, parse_mode: 'HTML' });
 }
 async function answerCallbackQuery(id) {
   await tg('answerCallbackQuery', { callback_query_id: id });
+}
+
+// Экранирование пользовательских/табличных данных перед вставкой в HTML-разметку сообщения
+function esc(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // ==================== КЛАВИАТУРЫ ====================
@@ -1202,7 +1207,7 @@ async function handleContactSeller(chatId) {
   for (const id of Object.keys(cart)) {
     const p = await getProductById(id);
     if (!p) continue;
-    itemsText += `• ${p.name}${p.brand ? ' (' + p.brand + ')' : ''} × ${cart[id]}\n`;
+    itemsText += `▫️ ${esc(p.name)}${p.brand ? ' (' + esc(p.brand) + ')' : ''} <b>× ${cart[id]}</b>\n`;
   }
 
   const seller = profile.sellerName ? await getSellerByName(profile.sellerName) : null;
@@ -1235,7 +1240,7 @@ async function confirmOrderPreview(chatId, branch) {
     const p = await getProductById(id);
     if (!p) continue;
     const qty = cart[id];
-    itemsText += `• ${p.name} × ${qty}\n`;
+    itemsText += `▫️ ${esc(p.name)} <b>× ${qty}</b>\n`;
   }
   await setState(chatId, { branch, itemsText });
   await sendMessage(chatId, await t(chatId, 'orderConfirm', profile.name, profile.phone, branch, itemsText), {
