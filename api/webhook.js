@@ -120,11 +120,35 @@ const T = {
     apChoosePhotos: (n) => `📷 Отправьте фото товара${n ? ` (загружено: ${n})` : ''}.\n\nМожно отправить несколько фото по очереди. Когда закончите — нажмите «Готово».`,
     apBtnDone: '✅ Готово',
     apNeedOnePhoto: '⚠️ Нужно хотя бы одно фото. Отправьте фото товара:',
-    apConfirm: (p) => `Проверьте товар:\n\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
+    apConfirm: (p) => `Проверьте товар:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
     apBtnSave: '✅ Сохранить',
     apBtnCancel: '❌ Отмена',
     apSaved: '🎉 Товар добавлен в каталог!',
     apCancelled: 'Добавление товара отменено.',
+    apChooseCollection: 'Выберите коллекцию:',
+    apNoCollections: '⚠️ Коллекции ещё не добавлены. Попросите администратора добавить хотя бы одну через «⚙️ Админ → 🗂 Коллекции».',
+    chooseCollection: '📦 Выберите коллекцию:',
+    noCollections: 'Коллекции пока не добавлены.',
+    chooseViewModeColl: (coll) => `📦 Коллекция: ${coll}\n\nКак хотите посмотреть товары?`,
+    btnChangeCollection: '🔄 Сменить коллекцию',
+    btnAdmin: '⚙️ Админ',
+    adminMenuTitle: '⚙️ Админ-панель',
+    adminBtnProducts: '📦 Товары (просмотр / удаление)',
+    adminBtnCollections: '🗂 Коллекции',
+    adminBackToMenu: '⬅️ В админ-меню',
+    adminBackToList: '⬅️ К списку',
+    adminNoProducts: 'В каталоге пока нет товаров.',
+    adminProductsTitle: '📦 Все товары в каталоге:',
+    adminProductDetail: (p) => `📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}`,
+    adminBtnDelete: '🗑 Удалить товар',
+    adminConfirmDelete: (name) => `Точно удалить «${name}»? Это необратимо.`,
+    adminBtnDeleteYes: '✅ Да, удалить',
+    adminBtnDeleteNo: '❌ Отмена',
+    adminDeleted: (name) => `🗑 «${name}» удалён из каталога.`,
+    adminCollectionsTitle: '🗂 Коллекции',
+    adminBtnAddCollection: '➕ Добавить коллекцию',
+    adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
+    adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
   },
   uz: {
     shareContact: '📱 Telefon raqamni yuborish',
@@ -191,11 +215,35 @@ const T = {
     apChoosePhotos: (n) => `📷 Отправьте фото товара${n ? ` (загружено: ${n})` : ''}.\n\nМожно отправить несколько фото по очереди. Когда закончите — нажмите «Готово».`,
     apBtnDone: '✅ Готово',
     apNeedOnePhoto: '⚠️ Нужно хотя бы одно фото. Отправьте фото товара:',
-    apConfirm: (p) => `Проверьте товар:\n\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
+    apConfirm: (p) => `Проверьте товар:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
     apBtnSave: '✅ Сохранить',
     apBtnCancel: '❌ Отмена',
     apSaved: '🎉 Товар добавлен в каталог!',
     apCancelled: 'Добавление товара отменено.',
+    apChooseCollection: 'Выберите коллекцию:',
+    apNoCollections: '⚠️ Коллекции ещё не добавлены. Попросите администратора добавить хотя бы одну через «⚙️ Админ → 🗂 Коллекции».',
+    chooseCollection: '📦 Выберите коллекцию:',
+    noCollections: 'Коллекции пока не добавлены.',
+    chooseViewModeColl: (coll) => `📦 Коллекция: ${coll}\n\nКак хотите посмотреть товары?`,
+    btnChangeCollection: '🔄 Сменить коллекцию',
+    btnAdmin: '⚙️ Админ',
+    adminMenuTitle: '⚙️ Админ-панель',
+    adminBtnProducts: '📦 Товары (просмотр / удаление)',
+    adminBtnCollections: '🗂 Коллекции',
+    adminBackToMenu: '⬅️ В админ-меню',
+    adminBackToList: '⬅️ К списку',
+    adminNoProducts: 'В каталоге пока нет товаров.',
+    adminProductsTitle: '📦 Все товары в каталоге:',
+    adminProductDetail: (p) => `📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}`,
+    adminBtnDelete: '🗑 Удалить товар',
+    adminConfirmDelete: (name) => `Точно удалить «${name}»? Это необратимо.`,
+    adminBtnDeleteYes: '✅ Да, удалить',
+    adminBtnDeleteNo: '❌ Отмена',
+    adminDeleted: (name) => `🗑 «${name}» удалён из каталога.`,
+    adminCollectionsTitle: '🗂 Коллекции',
+    adminBtnAddCollection: '➕ Добавить коллекцию',
+    adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
+    adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
   },
 };
 
@@ -282,6 +330,41 @@ async function setStaffRoleCached(chatId, role) {
   await redis.set(`catalog_staffrole:${chatId}`, role);
 }
 
+// Список коллекций — общий для всех, хранится постоянно, управляется через админ-панель
+async function getCollections() {
+  return (await redis.get('catalog_collections')) || [];
+}
+async function addCollection(name) {
+  const list = await getCollections();
+  if (!list.includes(name)) {
+    list.push(name);
+    await redis.set('catalog_collections', list);
+  }
+}
+
+// Выбранная клиентом коллекция на время просмотра каталога (6 часов)
+async function getSelectedCollection(chatId) {
+  return (await redis.get(`catalog_curcoll:${chatId}`)) || null;
+}
+async function setSelectedCollection(chatId, collection) {
+  await redis.set(`catalog_curcoll:${chatId}`, collection, { ex: 21600 });
+}
+
+// Состояние админ-панели (например, ввод названия новой коллекции)
+async function getAdminState(chatId) {
+  return (await redis.get(`catalog_adminstate:${chatId}`)) || null;
+}
+async function setAdminState(chatId, state) {
+  await redis.set(`catalog_adminstate:${chatId}`, state, { ex: 21600 });
+}
+async function clearAdminState(chatId) {
+  await redis.del(`catalog_adminstate:${chatId}`);
+}
+
+function isAdmin(chatId) {
+  return ADMIN_CHAT_IDS.includes(String(chatId));
+}
+
 async function t(chatId, key, ...args) {
   const lang = await getLang(chatId);
   const val = T[lang][key];
@@ -327,9 +410,9 @@ async function ensureSheetsExist() {
   if (!titles.includes(CATALOG_SHEET)) {
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: `${CATALOG_SHEET}!A1:G1`,
+      range: `${CATALOG_SHEET}!A1:H1`,
       valueInputOption: 'RAW',
-      requestBody: { values: [['Бренд', 'Категория', 'Название', 'Описание', 'Цена', 'Фото (URL)', 'Активен']] },
+      requestBody: { values: [['Бренд', 'Категория', 'Название', 'Описание', 'Цена', 'Фото (URL)', 'Активен', 'Коллекция']] },
     });
   }
   if (!titles.includes(ORDERS_SHEET)) {
@@ -346,6 +429,18 @@ async function ensureSheetsExist() {
       range: `${STAFF_SHEET}!A1:D1`,
       valueInputOption: 'RAW',
       requestBody: { values: [['chat_id', 'Имя', 'Роль', 'Дата']] },
+    });
+  }
+
+  // Добавляем колонку "Коллекция" (H) в лист "Каталог", если её ещё нет —
+  // актуально и для уже существующего листа, созданного до появления этой функции
+  const headerCheck = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!H1` });
+  if (!headerCheck.data.values || !headerCheck.data.values[0] || !headerCheck.data.values[0][0]) {
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `${CATALOG_SHEET}!H1`,
+      valueInputOption: 'RAW',
+      requestBody: { values: [['Коллекция']] },
     });
   }
 
@@ -410,41 +505,48 @@ async function addProductToSheet(product) {
   const sheets = await getSheetsClient();
   await sheets.spreadsheets.values.append({
     spreadsheetId: SHEET_ID,
-    range: `${CATALOG_SHEET}!A:G`,
+    range: `${CATALOG_SHEET}!A:H`,
     valueInputOption: 'RAW',
     requestBody: {
-      values: [[product.brand, product.category, product.name, product.desc, product.price, product.photos.join(','), 'да']],
+      values: [[
+        product.brand, product.category, product.name, product.desc,
+        product.price, product.photos.join(','), 'да', product.collection,
+      ]],
     },
   });
 }
 
-async function getCategories() {
+async function getCategories(collection) {
   const all = await getAllProducts();
-  const set = new Set(all.map((p) => p.category));
+  const filtered = collection ? all.filter((p) => p.collection === collection) : all;
+  const set = new Set(filtered.map((p) => p.category));
   return PRODUCT_CATEGORIES.filter((c) => set.has(c));
 }
 
-async function getBrands() {
+async function getBrands(collection) {
   const all = await getAllProducts();
-  const set = new Set(all.map((p) => p.brand));
+  const filtered = collection ? all.filter((p) => p.collection === collection) : all;
+  const set = new Set(filtered.map((p) => p.brand));
   return BRANDS.filter((b) => set.has(b));
 }
 
-async function getCategoriesForBrand(brand) {
+async function getCategoriesForBrand(brand, collection) {
   const all = await getAllProducts();
-  const set = new Set(all.filter((p) => p.brand === brand).map((p) => p.category));
+  const filtered = all.filter((p) => p.brand === brand && (!collection || p.collection === collection));
+  const set = new Set(filtered.map((p) => p.category));
   return PRODUCT_CATEGORIES.filter((c) => set.has(c));
 }
 
-async function getBrandsForCategory(category) {
+async function getBrandsForCategory(category, collection) {
   const all = await getAllProducts();
-  const set = new Set(all.filter((p) => p.category === category).map((p) => p.brand));
+  const filtered = all.filter((p) => p.category === category && (!collection || p.collection === collection));
+  const set = new Set(filtered.map((p) => p.brand));
   return BRANDS.filter((b) => set.has(b));
 }
 
 async function getAllProducts() {
   const sheets = await getSheetsClient();
-  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!A:G` });
+  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${CATALOG_SHEET}!A:H` });
   const rows = (result.data.values || []).slice(1);
   return rows
     .map((r, i) => ({
@@ -456,6 +558,7 @@ async function getAllProducts() {
       price: Number(r[4]) || 0,
       photos: String(r[5] || '').split(',').map((s) => s.trim()).filter(Boolean),
       active: r[6],
+      collection: r[7] || '',
     }))
     .filter((p) => p.name)
     .filter((p) => {
@@ -464,14 +567,26 @@ async function getAllProducts() {
     });
 }
 
-async function getProductsByCategory(category) {
+async function getProductsByBrandCategory(brand, category, collection) {
   const all = await getAllProducts();
-  return all.filter((p) => p.category === category);
+  return all.filter((p) => p.brand === brand && p.category === category && (!collection || p.collection === collection));
 }
 
-async function getProductsByBrandCategory(brand, category) {
-  const all = await getAllProducts();
-  return all.filter((p) => p.brand === brand && p.category === category);
+async function deleteProductRow(rowId) {
+  const sheets = await getSheetsClient();
+  const meta = await sheets.spreadsheets.get({ spreadsheetId: SHEET_ID });
+  const catalogSheet = meta.data.sheets.find((s) => s.properties.title === CATALOG_SHEET);
+  const rowIndex = Number(rowId) - 1; // 0-based индекс строки в таблице (id уже 1-based номер строки)
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: SHEET_ID,
+    requestBody: {
+      requests: [{
+        deleteDimension: {
+          range: { sheetId: catalogSheet.properties.sheetId, dimension: 'ROWS', startIndex: rowIndex, endIndex: rowIndex + 1 },
+        },
+      }],
+    },
+  });
 }
 
 async function getProductById(id) {
@@ -551,6 +666,9 @@ async function mainMenuKeyboard(chatId) {
   if (role === 'сотрудник' || role === 'редактор') {
     rows.push([{ text: await t(chatId, 'btnAddProduct') }]);
   }
+  if (isAdmin(chatId)) {
+    rows.push([{ text: await t(chatId, 'btnAdmin') }]);
+  }
   return { keyboard: rows, resize_keyboard: true };
 }
 
@@ -561,6 +679,7 @@ async function handleReset(chatId) {
   await clearCart(chatId);
   await clearState(chatId);
   await clearApState(chatId);
+  await clearAdminState(chatId);
   await sendMessage(chatId, await t(chatId, 'resetDone'), { remove_keyboard: true });
 }
 
@@ -628,7 +747,32 @@ async function startAddProduct(chatId) {
 }
 
 async function handleApCategory(chatId, category) {
-  await setApState(chatId, { step: 'brand', category });
+  const collections = await getCollections();
+  if (!collections.length) {
+    await clearApState(chatId);
+    await sendMessage(chatId, await t(chatId, 'apNoCollections'));
+    return;
+  }
+  await setApState(chatId, { step: 'collection', category });
+  await showApCollections(chatId, 0);
+}
+
+async function showApCollections(chatId, page, editMsgId) {
+  const collections = await getCollections();
+  const { slice, totalPages } = paginate(collections, page, PAGE_SIZE_LIST);
+  const rows = slice.map((c) => [{ text: c, callback_data: 'apcoll_' + collections.indexOf(c) }]);
+  rows.push(...paginationRow(page, totalPages, 'apcollpg_' + (page - 1), 'apcollpg_' + (page + 1)));
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'apChooseCollection');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function handleApCollection(chatId, idx, apState) {
+  const collections = await getCollections();
+  const collection = collections[idx];
+  if (!collection) return;
+  await setApState(chatId, { ...apState, step: 'brand', collection });
   await showApBrands(chatId, 0);
 }
 
@@ -739,16 +883,35 @@ async function handleText(chatId, text) {
     return handleApText(chatId, text, apState);
   }
 
+  // Если админ вводит название новой коллекции
+  if (isAdmin(chatId)) {
+    const adminState = await getAdminState(chatId);
+    if (adminState && adminState.step === 'addcoll') {
+      const name = text.trim();
+      await clearAdminState(chatId);
+      if (name) {
+        await addCollection(name);
+        await sendMessage(chatId, await t(chatId, 'adminCollectionAdded', name));
+      }
+      await showAdminCollections(chatId);
+      return;
+    }
+  }
+
   const lang = await getLang(chatId);
   const other = lang === 'ru' ? 'uz' : 'ru';
 
-  if (text === T.ru.btnCatalog || text === T.uz.btnCatalog) return showCatalogEntry(chatId);
+  if (text === T.ru.btnCatalog || text === T.uz.btnCatalog) return showCollections(chatId);
   if (text === T.ru.btnCart || text === T.uz.btnCart) return showCart(chatId);
   if (text === T.ru.btnMyOrders || text === T.uz.btnMyOrders) return showMyOrders(chatId);
   if (text === T.ru.btnAddProduct) {
     const role = await getStaffRoleCached(chatId);
     if (role === 'сотрудник' || role === 'редактор') return startAddProduct(chatId);
     return sendMessage(chatId, await t(chatId, 'staffNoAccess'));
+  }
+  if (text === T.ru.btnAdmin) {
+    if (!isAdmin(chatId)) return; // кнопка и так не показывается чужим, но на всякий случай
+    return showAdminMenu(chatId);
   }
   if (text === T.ru.btnLang || text === T.uz.btnLang) {
     return sendMessage(chatId, await t(chatId, 'chooseLang'), {
@@ -761,14 +924,34 @@ async function handleText(chatId, text) {
   await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
 }
 
+async function showCollections(chatId, editMsgId) {
+  const collections = await getCollections();
+  if (!collections.length) return sendMessage(chatId, await t(chatId, 'noCollections'));
+  const rows = collections.map((c, i) => [{ text: c, callback_data: 'coll_' + i }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'chooseCollection');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function handleCollectionSelect(chatId, idx, editMsgId) {
+  const collections = await getCollections();
+  const collection = collections[idx];
+  if (!collection) return;
+  await setSelectedCollection(chatId, collection);
+  await showCatalogEntry(chatId, editMsgId);
+}
+
 async function showCatalogEntry(chatId, editMsgId) {
+  const collection = await getSelectedCollection(chatId);
   const keyboard = {
     inline_keyboard: [
       [{ text: await t(chatId, 'btnByBrand'), callback_data: 'view_brand' }],
       [{ text: await t(chatId, 'btnByCategory'), callback_data: 'view_category' }],
+      [{ text: await t(chatId, 'btnChangeCollection'), callback_data: 'chgcoll' }],
     ],
   };
-  const text = await t(chatId, 'chooseViewMode');
+  const text = collection ? await t(chatId, 'chooseViewModeColl', collection) : await t(chatId, 'chooseViewMode');
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
 }
@@ -776,7 +959,8 @@ async function showCatalogEntry(chatId, editMsgId) {
 // ---------- ПУТЬ "ПО БРЕНДАМ": бренд -> категории этого бренда -> товары ----------
 
 async function showBrands(chatId, editMsgId, page = 0) {
-  const brands = await getBrands();
+  const collection = await getSelectedCollection(chatId);
+  const brands = await getBrands(collection);
   if (!brands.length) return sendMessage(chatId, await t(chatId, 'noBrands'));
   const { slice, totalPages } = paginate(brands, page, PAGE_SIZE_LIST);
   const rows = slice.map((b) => [{ text: b, callback_data: 'br_' + BRANDS.indexOf(b) }]);
@@ -789,8 +973,9 @@ async function showBrands(chatId, editMsgId, page = 0) {
 }
 
 async function showBrandCategories(chatId, brandIdx, editMsgId) {
+  const collection = await getSelectedCollection(chatId);
   const brand = BRANDS[brandIdx];
-  const categories = await getCategoriesForBrand(brand);
+  const categories = await getCategoriesForBrand(brand, collection);
   if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
   const rows = categories.map((c) => [
     { text: c, callback_data: 'brcat_' + brandIdx + '_' + PRODUCT_CATEGORIES.indexOf(c) },
@@ -805,7 +990,8 @@ async function showBrandCategories(chatId, brandIdx, editMsgId) {
 // ---------- ПУТЬ "ПО КАТЕГОРИЯМ": категория -> бренды этой категории -> товары ----------
 
 async function showCategories(chatId, editMsgId) {
-  const categories = await getCategories();
+  const collection = await getSelectedCollection(chatId);
+  const categories = await getCategories(collection);
   if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
   const rows = categories.map((c) => [{ text: c, callback_data: 'ca_' + PRODUCT_CATEGORIES.indexOf(c) }]);
   rows.push([{ text: await t(chatId, 'backToEntry'), callback_data: 'catalog_entry' }]);
@@ -816,8 +1002,9 @@ async function showCategories(chatId, editMsgId) {
 }
 
 async function showCategoryBrands(chatId, catIdx, editMsgId, page = 0) {
+  const collection = await getSelectedCollection(chatId);
   const category = PRODUCT_CATEGORIES[catIdx];
-  const brands = await getBrandsForCategory(category);
+  const brands = await getBrandsForCategory(category, collection);
   if (!brands.length) return sendMessage(chatId, await t(chatId, 'noBrands'));
   const { slice, totalPages } = paginate(brands, page, PAGE_SIZE_LIST);
   const rows = slice.map((b) => [
@@ -834,9 +1021,10 @@ async function showCategoryBrands(chatId, catIdx, editMsgId, page = 0) {
 // ---------- ФИНАЛЬНЫЙ СПИСОК ТОВАРОВ (бренд + категория), с пагинацией по 3 ----------
 
 async function showFinalProducts(chatId, brandIdx, catIdx, origin, editMsgId, page = 0) {
+  const collection = await getSelectedCollection(chatId);
   const brand = BRANDS[brandIdx];
   const category = PRODUCT_CATEGORIES[catIdx];
-  const products = await getProductsByBrandCategory(brand, category);
+  const products = await getProductsByBrandCategory(brand, category, collection);
   const { slice, totalPages } = paginate(products, page, PAGE_SIZE_PRODUCTS);
   const rows = slice.map((p) => [{ text: `${p.name} — ${formatPrice(p.price)}`, callback_data: 'prod_' + p.id }]);
   rows.push(
@@ -957,6 +1145,81 @@ async function showMyOrders(chatId) {
   await sendMessage(chatId, text);
 }
 
+// ==================== АДМИН-ПАНЕЛЬ ====================
+
+async function showAdminMenu(chatId, editMsgId) {
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: await t(chatId, 'adminBtnProducts'), callback_data: 'adm_products' }],
+      [{ text: await t(chatId, 'adminBtnCollections'), callback_data: 'adm_collections' }],
+    ],
+  };
+  const text = await t(chatId, 'adminMenuTitle');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showAdminProducts(chatId, page, editMsgId) {
+  const all = await getAllProducts();
+  if (!all.length) return sendMessage(chatId, await t(chatId, 'adminNoProducts'));
+  const { slice, totalPages } = paginate(all, page, 8);
+  const rows = slice.map((p) => [{ text: `${p.brand} · ${p.category} · ${p.name}`, callback_data: 'adm_prod_' + p.id }]);
+  rows.push(...paginationRow(page, totalPages, 'adm_prodpg_' + (page - 1), 'adm_prodpg_' + (page + 1)));
+  rows.push([{ text: await t(chatId, 'adminBackToMenu'), callback_data: 'adm_menu' }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'adminProductsTitle');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showAdminProduct(chatId, productId) {
+  const p = await getProductById(productId);
+  if (!p) return;
+  const text = await t(chatId, 'adminProductDetail', p);
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: await t(chatId, 'adminBtnDelete'), callback_data: 'adm_del_' + p.id }],
+      [{ text: await t(chatId, 'adminBackToList'), callback_data: 'adm_products' }],
+    ],
+  };
+  if (p.photos.length) await sendPhoto(chatId, p.photos[0], text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showAdminDeleteConfirm(chatId, productId) {
+  const p = await getProductById(productId);
+  if (!p) return;
+  await sendMessage(chatId, await t(chatId, 'adminConfirmDelete', p.name), {
+    inline_keyboard: [[
+      { text: await t(chatId, 'adminBtnDeleteYes'), callback_data: 'adm_delyes_' + productId },
+      { text: await t(chatId, 'adminBtnDeleteNo'), callback_data: 'adm_products' },
+    ]],
+  });
+}
+
+async function handleAdminDelete(chatId, productId) {
+  const p = await getProductById(productId);
+  await deleteProductRow(productId);
+  await sendMessage(chatId, await t(chatId, 'adminDeleted', p ? p.name : productId));
+  await showAdminProducts(chatId, 0);
+}
+
+async function showAdminCollections(chatId, editMsgId) {
+  const collections = await getCollections();
+  let text = await t(chatId, 'adminCollectionsTitle');
+  text += collections.length
+    ? '\n\n' + collections.map((c, i) => `${i + 1}. ${c}`).join('\n')
+    : '\n\n' + (await t(chatId, 'noCollections'));
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: await t(chatId, 'adminBtnAddCollection'), callback_data: 'adm_addcoll' }],
+      [{ text: await t(chatId, 'adminBackToMenu'), callback_data: 'adm_menu' }],
+    ],
+  };
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
 async function handleCallback(cq) {
   const chatId = cq.message.chat.id;
   const messageId = cq.message.message_id;
@@ -974,6 +1237,11 @@ async function handleCallback(cq) {
     const idx = Number(data.slice(6));
     const category = PRODUCT_CATEGORIES[idx];
     if (category) await handleApCategory(chatId, category);
+  } else if (data.startsWith('apcollpg_')) {
+    await showApCollections(chatId, Number(data.slice(9)), messageId);
+  } else if (data.startsWith('apcoll_')) {
+    const apState = await getApState(chatId);
+    if (apState) await handleApCollection(chatId, Number(data.slice(7)), apState);
   } else if (data.startsWith('apbrpg_')) {
     await showApBrands(chatId, Number(data.slice(7)), messageId);
   } else if (data.startsWith('apbr_')) {
@@ -987,6 +1255,10 @@ async function handleCallback(cq) {
     if (apState) await handleApSave(chatId, apState);
   } else if (data === 'apconfirm_cancel') {
     await handleApCancel(chatId);
+  } else if (data === 'chgcoll') {
+    await showCollections(chatId, messageId);
+  } else if (data.startsWith('coll_')) {
+    await handleCollectionSelect(chatId, Number(data.slice(5)), messageId);
   } else if (data === 'catalog_entry') {
     await showCatalogEntry(chatId, messageId);
   } else if (data === 'view_brand') {
@@ -1039,6 +1311,25 @@ async function handleCallback(cq) {
     await clearState(chatId);
     await sendMessage(chatId, await t(chatId, 'orderCancelled'));
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+  } else if (data === 'adm_menu') {
+    if (isAdmin(chatId)) await showAdminMenu(chatId, messageId);
+  } else if (data === 'adm_products') {
+    if (isAdmin(chatId)) await showAdminProducts(chatId, 0, messageId);
+  } else if (data.startsWith('adm_prodpg_')) {
+    if (isAdmin(chatId)) await showAdminProducts(chatId, Number(data.slice(11)), messageId);
+  } else if (data.startsWith('adm_delyes_')) {
+    if (isAdmin(chatId)) await handleAdminDelete(chatId, data.slice(11));
+  } else if (data.startsWith('adm_del_')) {
+    if (isAdmin(chatId)) await showAdminDeleteConfirm(chatId, data.slice(8));
+  } else if (data.startsWith('adm_prod_')) {
+    if (isAdmin(chatId)) await showAdminProduct(chatId, data.slice(9));
+  } else if (data === 'adm_collections') {
+    if (isAdmin(chatId)) await showAdminCollections(chatId, messageId);
+  } else if (data === 'adm_addcoll') {
+    if (isAdmin(chatId)) {
+      await setAdminState(chatId, { step: 'addcoll' });
+      await sendMessage(chatId, await t(chatId, 'adminAddCollectionPrompt'));
+    }
   }
 }
 
