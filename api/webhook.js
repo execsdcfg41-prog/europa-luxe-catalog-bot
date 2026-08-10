@@ -24,11 +24,25 @@ const ORDERS_SHEET = 'Заказы';
 const STAFF_SHEET = 'Сотрудники';
 
 // Фиксированный список категорий для визарда добавления товара сотрудником.
-// Можно свободно редактировать этот список.
 const PRODUCT_CATEGORIES = [
-  'Куртка', 'Костюм', 'Пиджак', 'Брюки', 'Свитер',
-  'Рубашка', 'Обувь', 'Кепка', 'Ремень', 'Аксессуары',
+  'Куртка', 'Костюм', 'Двойка', 'Пиджак', 'Брюки', 'Свитер', 'Рубашка',
+  'Обувь', 'Кепка', 'Ремень', 'Футболка', 'Поло', 'Джинсы',
+  'Спортивный костюм', 'Сумка', 'Барсетка',
 ];
+
+// Фиксированный список брендов бутика.
+const BRANDS = [
+  'Capobianco', 'Tramarossa', 'Ferrante', 'Valentino', "Doucal's", 'Castangia',
+  'Mancini', 'Bramani', 'Moreschi', 'Alessandro Gherardi', 'Gimos', 'Caruso',
+  'Tombolini', 'Berwich', 'Mandelli', 'Germano', 'Lenoci', 'Barba Napoli',
+  'Moorer', 'Bertolo', 'Biagini', 'Serapian', 'Jacob Cohen', 'Fedeli',
+  'PELLETERRI DI PARMA', 'Herno', 'Barrett', 'Henderson', 'Scissor Scriptor',
+  'Pashmere', 'Luigi Bianchi', 'Bally', 'Hogan', 'Dressler', 'Gardeur',
+  'Brax', 'Viadeste', 'Marco Pescarolo',
+];
+
+const PAGE_SIZE_LIST = 10; // брендов на экран в списках
+const PAGE_SIZE_PRODUCTS = 3; // товаров на экран
 
 const BRANCHES = [
   'Elegance Ц1',
@@ -59,9 +73,10 @@ const T = {
     chooseBrand: '🏷 Выберите бренд:',
     noBrands: 'Бренды пока не добавлены.',
     chooseBrandCategory: (brand) => `Бренд: ${brand}\nВыберите категорию:`,
+    chooseCategoryBrand: (category) => `Категория: ${category}\nВыберите бренд:`,
     backToBrands: '⬅️ К брендам',
     backToEntry: '⬅️ Назад',
-    chooseProduct: (cat) => `Категория: ${cat}\nВыберите товар:`,
+    chooseProduct: (cat) => `${cat}\nВыберите товар:`,
     backToCategories: '⬅️ К категориям',
     addToCart: '🛒 Добавить в корзину',
     addedToCart: (name) => `✅ «${name}» добавлен в корзину.`,
@@ -129,9 +144,10 @@ const T = {
     chooseBrand: '🏷 Brendni tanlang:',
     noBrands: "Brendlar hali qo'shilmagan.",
     chooseBrandCategory: (brand) => `Brend: ${brand}\nKategoriyani tanlang:`,
+    chooseCategoryBrand: (category) => `Kategoriya: ${category}\nBrendni tanlang:`,
     backToBrands: '⬅️ Brendlarga',
     backToEntry: '⬅️ Orqaga',
-    chooseProduct: (cat) => `Kategoriya: ${cat}\nMahsulotni tanlang:`,
+    chooseProduct: (cat) => `${cat}\nMahsulotni tanlang:`,
     backToCategories: '⬅️ Kategoriyalarga',
     addToCart: "🛒 Savatga qo'shish",
     addedToCart: (name) => `✅ «${name}» savatga qo'shildi.`,
@@ -186,6 +202,20 @@ const T = {
 function formatPrice(n) {
   n = Number(n) || 0;
   return n.toLocaleString('ru-RU') + ' сум';
+}
+
+function paginate(items, page, pageSize) {
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  page = Math.max(0, Math.min(page, totalPages - 1));
+  const slice = items.slice(page * pageSize, page * pageSize + pageSize);
+  return { slice, page, totalPages };
+}
+
+function paginationRow(page, totalPages, prevData, nextData) {
+  const row = [];
+  if (page > 0) row.push({ text: '◀️ Назад', callback_data: prevData });
+  if (page < totalPages - 1) row.push({ text: '▶️ Показать ещё', callback_data: nextData });
+  return row.length ? [row] : [];
 }
 
 // ==================== СЕССИЯ (Redis) ====================
@@ -390,29 +420,26 @@ async function addProductToSheet(product) {
 
 async function getCategories() {
   const all = await getAllProducts();
-  const cats = [];
-  all.forEach((p) => {
-    if (p.category && !cats.includes(p.category)) cats.push(p.category);
-  });
-  return cats;
+  const set = new Set(all.map((p) => p.category));
+  return PRODUCT_CATEGORIES.filter((c) => set.has(c));
 }
 
 async function getBrands() {
   const all = await getAllProducts();
-  const brands = [];
-  all.forEach((p) => {
-    if (p.brand && !brands.includes(p.brand)) brands.push(p.brand);
-  });
-  return brands;
+  const set = new Set(all.map((p) => p.brand));
+  return BRANDS.filter((b) => set.has(b));
 }
 
 async function getCategoriesForBrand(brand) {
   const all = await getAllProducts();
-  const cats = [];
-  all.forEach((p) => {
-    if (p.brand === brand && p.category && !cats.includes(p.category)) cats.push(p.category);
-  });
-  return cats;
+  const set = new Set(all.filter((p) => p.brand === brand).map((p) => p.category));
+  return PRODUCT_CATEGORIES.filter((c) => set.has(c));
+}
+
+async function getBrandsForCategory(category) {
+  const all = await getAllProducts();
+  const set = new Set(all.filter((p) => p.category === category).map((p) => p.brand));
+  return BRANDS.filter((b) => set.has(b));
 }
 
 async function getAllProducts() {
@@ -602,14 +629,27 @@ async function startAddProduct(chatId) {
 
 async function handleApCategory(chatId, category) {
   await setApState(chatId, { step: 'brand', category });
-  await sendMessage(chatId, await t(chatId, 'apChooseBrand'));
+  await showApBrands(chatId, 0);
+}
+
+async function showApBrands(chatId, page, editMsgId) {
+  const { slice, totalPages } = paginate(BRANDS, page, PAGE_SIZE_LIST);
+  const rows = slice.map((b) => [{ text: b, callback_data: 'apbr_' + BRANDS.indexOf(b) }]);
+  rows.push(...paginationRow(page, totalPages, 'apbrpg_' + (page - 1), 'apbrpg_' + (page + 1)));
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'apChooseBrand');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function handleApBrand(chatId, brandIdx, apState) {
+  const brand = BRANDS[brandIdx];
+  await setApState(chatId, { ...apState, step: 'name', brand });
+  await sendMessage(chatId, await t(chatId, 'apChooseName'));
 }
 
 async function handleApText(chatId, text, apState) {
-  if (apState.step === 'brand') {
-    await setApState(chatId, { ...apState, step: 'name', brand: text.trim() });
-    await sendMessage(chatId, await t(chatId, 'apChooseName'));
-  } else if (apState.step === 'name') {
+  if (apState.step === 'name') {
     await setApState(chatId, { ...apState, step: 'desc', name: text.trim() });
     await sendMessage(chatId, await t(chatId, 'apChooseDesc'));
   } else if (apState.step === 'desc') {
@@ -695,7 +735,7 @@ async function handleText(chatId, text) {
 
   // Если сотрудник в процессе добавления товара — текст обрабатывается визардом, а не меню
   const apState = await getApState(chatId);
-  if (apState && ['brand', 'name', 'desc', 'price'].includes(apState.step)) {
+  if (apState && ['name', 'desc', 'price'].includes(apState.step)) {
     return handleApText(chatId, text, apState);
   }
 
@@ -733,10 +773,14 @@ async function showCatalogEntry(chatId, editMsgId) {
   else await sendMessage(chatId, text, keyboard);
 }
 
-async function showBrands(chatId, editMsgId) {
+// ---------- ПУТЬ "ПО БРЕНДАМ": бренд -> категории этого бренда -> товары ----------
+
+async function showBrands(chatId, editMsgId, page = 0) {
   const brands = await getBrands();
   if (!brands.length) return sendMessage(chatId, await t(chatId, 'noBrands'));
-  const rows = brands.map((b) => [{ text: b, callback_data: 'brand_' + encodeURIComponent(b) }]);
+  const { slice, totalPages } = paginate(brands, page, PAGE_SIZE_LIST);
+  const rows = slice.map((b) => [{ text: b, callback_data: 'br_' + BRANDS.indexOf(b) }]);
+  rows.push(...paginationRow(page, totalPages, 'brpg_' + (page - 1), 'brpg_' + (page + 1)));
   rows.push([{ text: await t(chatId, 'backToEntry'), callback_data: 'catalog_entry' }]);
   const keyboard = { inline_keyboard: rows };
   const text = await t(chatId, 'chooseBrand');
@@ -744,11 +788,12 @@ async function showBrands(chatId, editMsgId) {
   else await sendMessage(chatId, text, keyboard);
 }
 
-async function showBrandCategories(chatId, brand, editMsgId) {
+async function showBrandCategories(chatId, brandIdx, editMsgId) {
+  const brand = BRANDS[brandIdx];
   const categories = await getCategoriesForBrand(brand);
   if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
-  const rows = categories.map((c, i) => [
-    { text: c, callback_data: 'bc_' + encodeURIComponent(brand) + '::' + i },
+  const rows = categories.map((c) => [
+    { text: c, callback_data: 'brcat_' + brandIdx + '_' + PRODUCT_CATEGORIES.indexOf(c) },
   ]);
   rows.push([{ text: await t(chatId, 'backToBrands'), callback_data: 'view_brand' }]);
   const keyboard = { inline_keyboard: rows };
@@ -757,20 +802,12 @@ async function showBrandCategories(chatId, brand, editMsgId) {
   else await sendMessage(chatId, text, keyboard);
 }
 
-async function showBrandCategoryProducts(chatId, brand, category, editMsgId) {
-  const products = await getProductsByBrandCategory(brand, category);
-  const rows = products.map((p) => [{ text: `${p.name} — ${formatPrice(p.price)}`, callback_data: 'prod_' + p.id }]);
-  rows.push([{ text: await t(chatId, 'backToBrands'), callback_data: 'brand_' + encodeURIComponent(brand) }]);
-  const keyboard = { inline_keyboard: rows };
-  const text = await t(chatId, 'chooseProduct', category);
-  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
-  else await sendMessage(chatId, text, keyboard);
-}
+// ---------- ПУТЬ "ПО КАТЕГОРИЯМ": категория -> бренды этой категории -> товары ----------
 
 async function showCategories(chatId, editMsgId) {
   const categories = await getCategories();
   if (!categories.length) return sendMessage(chatId, await t(chatId, 'noCategories'));
-  const rows = categories.map((c, i) => [{ text: c, callback_data: 'cat_' + i }]);
+  const rows = categories.map((c) => [{ text: c, callback_data: 'ca_' + PRODUCT_CATEGORIES.indexOf(c) }]);
   rows.push([{ text: await t(chatId, 'backToEntry'), callback_data: 'catalog_entry' }]);
   const keyboard = { inline_keyboard: rows };
   const text = await t(chatId, 'chooseCategory');
@@ -778,12 +815,42 @@ async function showCategories(chatId, editMsgId) {
   else await sendMessage(chatId, text, keyboard);
 }
 
-async function showProducts(chatId, category, editMsgId) {
-  const products = await getProductsByCategory(category);
-  const rows = products.map((p) => [{ text: `${p.name} — ${formatPrice(p.price)}`, callback_data: 'prod_' + p.id }]);
-  rows.push([{ text: await t(chatId, 'backToCategories'), callback_data: 'back_categories' }]);
-  const text = await t(chatId, 'chooseProduct', category);
+async function showCategoryBrands(chatId, catIdx, editMsgId, page = 0) {
+  const category = PRODUCT_CATEGORIES[catIdx];
+  const brands = await getBrandsForCategory(category);
+  if (!brands.length) return sendMessage(chatId, await t(chatId, 'noBrands'));
+  const { slice, totalPages } = paginate(brands, page, PAGE_SIZE_LIST);
+  const rows = slice.map((b) => [
+    { text: b, callback_data: 'cabr_' + catIdx + '_' + BRANDS.indexOf(b) },
+  ]);
+  rows.push(...paginationRow(page, totalPages, `cabrpg_${catIdx}_${page - 1}`, `cabrpg_${catIdx}_${page + 1}`));
+  rows.push([{ text: await t(chatId, 'backToCategories'), callback_data: 'view_category' }]);
   const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'chooseCategoryBrand', category);
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+// ---------- ФИНАЛЬНЫЙ СПИСОК ТОВАРОВ (бренд + категория), с пагинацией по 3 ----------
+
+async function showFinalProducts(chatId, brandIdx, catIdx, origin, editMsgId, page = 0) {
+  const brand = BRANDS[brandIdx];
+  const category = PRODUCT_CATEGORIES[catIdx];
+  const products = await getProductsByBrandCategory(brand, category);
+  const { slice, totalPages } = paginate(products, page, PAGE_SIZE_PRODUCTS);
+  const rows = slice.map((p) => [{ text: `${p.name} — ${formatPrice(p.price)}`, callback_data: 'prod_' + p.id }]);
+  rows.push(
+    ...paginationRow(
+      page, totalPages,
+      `prodpg_${brandIdx}_${catIdx}_${origin}_${page - 1}`,
+      `prodpg_${brandIdx}_${catIdx}_${origin}_${page + 1}`
+    )
+  );
+  const backCallback = origin === 'b' ? 'br_' + brandIdx : 'ca_' + catIdx;
+  const backLabel = origin === 'b' ? await t(chatId, 'backToBrands') : await t(chatId, 'backToCategories');
+  rows.push([{ text: backLabel, callback_data: backCallback }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'chooseProduct', `${brand} · ${category}`);
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
 }
@@ -907,6 +974,11 @@ async function handleCallback(cq) {
     const idx = Number(data.slice(6));
     const category = PRODUCT_CATEGORIES[idx];
     if (category) await handleApCategory(chatId, category);
+  } else if (data.startsWith('apbrpg_')) {
+    await showApBrands(chatId, Number(data.slice(7)), messageId);
+  } else if (data.startsWith('apbr_')) {
+    const apState = await getApState(chatId);
+    if (apState) await handleApBrand(chatId, Number(data.slice(5)), apState);
   } else if (data === 'apphotos_done') {
     const apState = await getApState(chatId);
     if (apState) await handleApPhotosDone(chatId, apState);
@@ -919,20 +991,26 @@ async function handleCallback(cq) {
     await showCatalogEntry(chatId, messageId);
   } else if (data === 'view_brand') {
     await showBrands(chatId, messageId);
+  } else if (data.startsWith('brpg_')) {
+    await showBrands(chatId, messageId, Number(data.slice(5)));
+  } else if (data.startsWith('brcat_')) {
+    const [brandIdx, catIdx] = data.slice(6).split('_').map(Number);
+    await showFinalProducts(chatId, brandIdx, catIdx, 'b', messageId);
+  } else if (data.startsWith('br_')) {
+    await showBrandCategories(chatId, Number(data.slice(3)), messageId);
   } else if (data === 'view_category') {
     await showCategories(chatId, messageId);
-  } else if (data.startsWith('brand_')) {
-    await showBrandCategories(chatId, decodeURIComponent(data.slice(6)), messageId);
-  } else if (data.startsWith('bc_')) {
-    const [encBrand, idxStr] = data.slice(3).split('::');
-    const brand = decodeURIComponent(encBrand);
-    const categories = await getCategoriesForBrand(brand);
-    const category = categories[Number(idxStr)];
-    if (category) await showBrandCategoryProducts(chatId, brand, category, messageId);
-  } else if (data.startsWith('cat_')) {
-    const categories = await getCategories();
-    const category = categories[Number(data.slice(4))];
-    if (category) await showProducts(chatId, category, messageId);
+  } else if (data.startsWith('cabrpg_')) {
+    const [catIdx, page] = data.slice(7).split('_').map(Number);
+    await showCategoryBrands(chatId, catIdx, messageId, page);
+  } else if (data.startsWith('cabr_')) {
+    const [catIdx, brandIdx] = data.slice(5).split('_').map(Number);
+    await showFinalProducts(chatId, brandIdx, catIdx, 'c', messageId);
+  } else if (data.startsWith('ca_')) {
+    await showCategoryBrands(chatId, Number(data.slice(3)), messageId);
+  } else if (data.startsWith('prodpg_')) {
+    const [brandIdx, catIdx, origin, page] = data.slice(7).split('_');
+    await showFinalProducts(chatId, Number(brandIdx), Number(catIdx), origin, messageId, Number(page));
   } else if (data.startsWith('prod_')) {
     await showProduct(chatId, data.slice(5));
   } else if (data.startsWith('add_')) {
@@ -942,8 +1020,6 @@ async function handleCallback(cq) {
     await setCart(chatId, cart);
     const p = await getProductById(productId);
     await sendMessage(chatId, await t(chatId, 'addedToCart', p ? p.name : ''));
-  } else if (data === 'back_categories') {
-    await showCategories(chatId, messageId);
   } else if (data.startsWith('rm_')) {
     const cart = await getCart(chatId);
     delete cart[data.slice(3)];
