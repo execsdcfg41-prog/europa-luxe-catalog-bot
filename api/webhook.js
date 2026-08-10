@@ -80,26 +80,25 @@ const T = {
     backToCategories: '⬅️ К категориям',
     addToCart: '🛒 Добавить в корзину',
     addedToCart: (name) => `✅ «${name}» добавлен в корзину.`,
-    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc ? p.desc + '\n\n' : ''}💵 ${formatPrice(p.price)}`,
+    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc || ''}`,
     cartEmpty: '🛒 Корзина пуста.\n\nЗагляните в каталог, чтобы что-то выбрать.',
     cartHeader: '🛒 Ваша корзина:\n\n',
-    cartLine: (name, qty, sum) => `• ${name} × ${qty} = ${formatPrice(sum)}`,
-    cartTotal: (sum) => `\n\n💰 Итого: ${formatPrice(sum)}`,
+    cartLine: (name, qty) => `• ${name} × ${qty}`,
     btnCheckout: '✅ Оформить заказ',
     btnClearCart: '🗑 Очистить корзину',
     btnRemoveItem: (name) => `❌ Убрать: ${name}`,
     cartCleared: '🗑 Корзина очищена.',
     chooseBranch: 'В каком филиале хотите получить заказ?',
-    orderConfirm: (name, phone, branch, itemsText, total) =>
-      `Проверьте заявку:\n\n👤 ${name}\n📞 ${phone}\n🏬 ${branch}\n\n${itemsText}\n💰 Итого: ${formatPrice(total)}\n\nПодтвердить?`,
+    orderConfirm: (name, phone, branch, itemsText) =>
+      `Проверьте заявку:\n\n👤 ${name}\n📞 ${phone}\n🏬 ${branch}\n\n${itemsText}\nПодтвердить?`,
     btnConfirmOrder: '✅ Подтвердить',
     btnCancelOrder: '❌ Отмена',
     orderPlaced: (id) => `🎉 Заявка №${id} принята! Мы свяжемся с вами для подтверждения.`,
     orderCancelled: 'Оформление отменено.',
     myOrdersEmpty: 'У вас пока нет заявок.',
     myOrdersHeader: '📦 Ваши заявки:\n\n',
-    myOrderLine: (id, date, branch, total, status) =>
-      `№${id} от ${date}\n🏬 ${branch} · 💰 ${formatPrice(total)}\nСтатус: ${status}\n`,
+    myOrderLine: (id, date, branch, status) =>
+      `№${id} от ${date}\n🏬 ${branch}\nСтатус: ${status}\n`,
     chooseLang: 'Выберите язык интерфейса:',
     langSetRu: '✅ Язык изменён на русский.',
     langSetUz: "✅ Til o'zbekchaga o'zgartirildi.",
@@ -115,15 +114,15 @@ const T = {
     apChooseBrand: 'Введите название бренда:',
     apChooseName: 'Введите название товара:',
     apChooseDesc: 'Введите краткое описание товара (или отправьте "-", чтобы пропустить):',
-    apChoosePrice: 'Введите цену товара числом (например 850000):',
-    apInvalidPrice: '⚠️ Цена должна быть числом. Попробуйте ещё раз:',
     apChoosePhotos: (n) => `📷 Отправьте фото товара${n ? ` (загружено: ${n})` : ''}.\n\nМожно отправить несколько фото по очереди. Когда закончите — нажмите «Готово».`,
     apBtnDone: '✅ Готово',
     apNeedOnePhoto: '⚠️ Нужно хотя бы одно фото. Отправьте фото товара:',
-    apConfirm: (p) => `Проверьте товар:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
+    apConfirm: (p) => `Проверьте товар:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}📷 Фото: ${p.photos.length}\n\nСохранить?`,
     apBtnSave: '✅ Сохранить',
     apBtnCancel: '❌ Отмена',
     apSaved: '🎉 Товар добавлен в каталог!',
+    apSentToModeration: '📨 Товар отправлен на согласование администратору. Как только он подтвердит — товар появится в каталоге, вам придёт уведомление.',
+    modProductCaption: (p) => `🆕 Новый товар на согласование:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}📷 Фото: ${p.photos.length}`,
     apCancelled: 'Добавление товара отменено.',
     apChooseCollection: 'Выберите коллекцию:',
     apNoCollections: '⚠️ Коллекции ещё не добавлены. Попросите администратора добавить хотя бы одну через «⚙️ Админ → 🗂 Коллекции».',
@@ -139,7 +138,7 @@ const T = {
     adminBackToList: '⬅️ К списку',
     adminNoProducts: 'В каталоге пока нет товаров.',
     adminProductsTitle: '📦 Все товары в каталоге:',
-    adminProductDetail: (p) => `📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}`,
+    adminProductDetail: (p) => `📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc || ''}`,
     adminBtnDelete: '🗑 Удалить товар',
     adminConfirmDelete: (name) => `Точно удалить «${name}»? Это необратимо.`,
     adminBtnDeleteYes: '✅ Да, удалить',
@@ -147,6 +146,7 @@ const T = {
     adminDeleted: (name) => `🗑 «${name}» удалён из каталога.`,
     adminCollectionsTitle: '🗂 Коллекции',
     adminBtnAddCollection: '➕ Добавить коллекцию',
+    adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
   },
@@ -175,26 +175,25 @@ const T = {
     backToCategories: '⬅️ Kategoriyalarga',
     addToCart: "🛒 Savatga qo'shish",
     addedToCart: (name) => `✅ «${name}» savatga qo'shildi.`,
-    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc ? p.desc + '\n\n' : ''}💵 ${formatPrice(p.price)}`,
+    productCard: (p) => `🛍 ${p.name}${p.brand ? '\n🏷 ' + p.brand : ''}\n\n${p.desc || ''}`,
     cartEmpty: "🛒 Savat bo'sh.\n\nKatalogdan mahsulot tanlang.",
     cartHeader: '🛒 Sizning savatingiz:\n\n',
-    cartLine: (name, qty, sum) => `• ${name} × ${qty} = ${formatPrice(sum)}`,
-    cartTotal: (sum) => `\n\n💰 Jami: ${formatPrice(sum)}`,
+    cartLine: (name, qty) => `• ${name} × ${qty}`,
     btnCheckout: '✅ Buyurtma berish',
     btnClearCart: '🗑 Savatni tozalash',
     btnRemoveItem: (name) => `❌ O'chirish: ${name}`,
     cartCleared: "🗑 Savat tozalandi.",
     chooseBranch: 'Qaysi filialdan olmoqchisiz?',
-    orderConfirm: (name, phone, branch, itemsText, total) =>
-      `Buyurtmani tekshiring:\n\n👤 ${name}\n📞 ${phone}\n🏬 ${branch}\n\n${itemsText}\n💰 Jami: ${formatPrice(total)}\n\nTasdiqlaysizmi?`,
+    orderConfirm: (name, phone, branch, itemsText) =>
+      `Buyurtmani tekshiring:\n\n👤 ${name}\n📞 ${phone}\n🏬 ${branch}\n\n${itemsText}\nTasdiqlaysizmi?`,
     btnConfirmOrder: '✅ Tasdiqlash',
     btnCancelOrder: '❌ Bekor qilish',
     orderPlaced: (id) => `🎉 №${id} buyurtma qabul qilindi! Tasdiqlash uchun siz bilan bog'lanamiz.`,
     orderCancelled: 'Buyurtma bekor qilindi.',
     myOrdersEmpty: "Sizda hali buyurtmalar yo'q.",
     myOrdersHeader: '📦 Buyurtmalaringiz:\n\n',
-    myOrderLine: (id, date, branch, total, status) =>
-      `№${id} — ${date}\n🏬 ${branch} · 💰 ${formatPrice(total)}\nHolat: ${status}\n`,
+    myOrderLine: (id, date, branch, status) =>
+      `№${id} — ${date}\n🏬 ${branch}\nHolat: ${status}\n`,
     chooseLang: 'Interfeys tilini tanlang:',
     langSetRu: '✅ Язык изменён на русский.',
     langSetUz: "✅ Til o'zbekchaga o'zgartirildi.",
@@ -210,15 +209,15 @@ const T = {
     apChooseBrand: 'Введите название бренда:',
     apChooseName: 'Введите название товара:',
     apChooseDesc: 'Введите краткое описание товара (или отправьте "-", чтобы пропустить):',
-    apChoosePrice: 'Введите цену товара числом (например 850000):',
-    apInvalidPrice: '⚠️ Цена должна быть числом. Попробуйте ещё раз:',
     apChoosePhotos: (n) => `📷 Отправьте фото товара${n ? ` (загружено: ${n})` : ''}.\n\nМожно отправить несколько фото по очереди. Когда закончите — нажмите «Готово».`,
     apBtnDone: '✅ Готово',
     apNeedOnePhoto: '⚠️ Нужно хотя бы одно фото. Отправьте фото товара:',
-    apConfirm: (p) => `Проверьте товар:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}\n📷 Фото: ${p.photos.length}\n\nСохранить?`,
+    apConfirm: (p) => `Проверьте товар:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}📷 Фото: ${p.photos.length}\n\nСохранить?`,
     apBtnSave: '✅ Сохранить',
     apBtnCancel: '❌ Отмена',
     apSaved: '🎉 Товар добавлен в каталог!',
+    apSentToModeration: '📨 Товар отправлен на согласование администратору. Как только он подтвердит — товар появится в каталоге, вам придёт уведомление.',
+    modProductCaption: (p) => `🆕 Новый товар на согласование:\n\n📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}📷 Фото: ${p.photos.length}`,
     apCancelled: 'Добавление товара отменено.',
     apChooseCollection: 'Выберите коллекцию:',
     apNoCollections: '⚠️ Коллекции ещё не добавлены. Попросите администратора добавить хотя бы одну через «⚙️ Админ → 🗂 Коллекции».',
@@ -234,7 +233,7 @@ const T = {
     adminBackToList: '⬅️ К списку',
     adminNoProducts: 'В каталоге пока нет товаров.',
     adminProductsTitle: '📦 Все товары в каталоге:',
-    adminProductDetail: (p) => `📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc ? p.desc + '\n' : ''}💵 ${formatPrice(p.price)}`,
+    adminProductDetail: (p) => `📦 ${p.collection}\n🏷 ${p.brand}\n📂 ${p.category}\n🛍 ${p.name}\n${p.desc || ''}`,
     adminBtnDelete: '🗑 Удалить товар',
     adminConfirmDelete: (name) => `Точно удалить «${name}»? Это необратимо.`,
     adminBtnDeleteYes: '✅ Да, удалить',
@@ -242,15 +241,11 @@ const T = {
     adminDeleted: (name) => `🗑 «${name}» удалён из каталога.`,
     adminCollectionsTitle: '🗂 Коллекции',
     adminBtnAddCollection: '➕ Добавить коллекцию',
+    adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
   },
 };
-
-function formatPrice(n) {
-  n = Number(n) || 0;
-  return n.toLocaleString('ru-RU') + ' сум';
-}
 
 function paginate(items, page, pageSize) {
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
@@ -361,8 +356,33 @@ async function clearAdminState(chatId) {
   await redis.del(`catalog_adminstate:${chatId}`);
 }
 
-function isAdmin(chatId) {
-  return ADMIN_CHAT_IDS.includes(String(chatId));
+async function isAdmin(chatId) {
+  if (ADMIN_CHAT_IDS.includes(String(chatId))) return true;
+  const role = await getStaffRoleCached(chatId);
+  return role === 'администратор';
+}
+
+// Одноразовые ссылки-приглашения администратора
+async function createAdminInviteToken() {
+  const token = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  await redis.set(`catalog_admtok:${token}`, '1', { ex: 86400 });
+  return token;
+}
+async function consumeAdminInviteToken(token) {
+  const key = `catalog_admtok:${token}`;
+  const val = await redis.get(key);
+  if (!val) return false;
+  await redis.del(key);
+  return true;
+}
+
+async function getBotUsername() {
+  let username = await redis.get('catalog_botusername');
+  if (username) return username;
+  const res = await tg('getMe', {});
+  username = res && res.result && res.result.username;
+  if (username) await redis.set('catalog_botusername', username);
+  return username;
 }
 
 async function t(chatId, key, ...args) {
@@ -510,7 +530,7 @@ async function addProductToSheet(product) {
     requestBody: {
       values: [[
         product.brand, product.category, product.name, product.desc,
-        product.price, product.photos.join(','), 'да', product.collection,
+        '', product.photos.join(','), 'да', product.collection,
       ]],
     },
   });
@@ -594,7 +614,7 @@ async function getProductById(id) {
   return all.find((p) => p.id === String(id)) || null;
 }
 
-async function addOrder(name, phone, branch, itemsText, total) {
+async function addOrder(name, phone, branch, itemsText) {
   const sheets = await getSheetsClient();
   const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${ORDERS_SHEET}!A:A` });
   const id = (result.data.values || []).length; // header = row1 -> next id = rows count
@@ -603,7 +623,7 @@ async function addOrder(name, phone, branch, itemsText, total) {
     spreadsheetId: SHEET_ID,
     range: `${ORDERS_SHEET}!A:H`,
     valueInputOption: 'RAW',
-    requestBody: { values: [[id, date, name, phone, branch, itemsText, total, 'Новый']] },
+    requestBody: { values: [[id, date, name, phone, branch, itemsText, '', 'Новый']] },
   });
   return id;
 }
@@ -615,7 +635,7 @@ async function getOrdersByPhone(phone) {
   const targetDigits = digitsOnly(phone);
   return rows
     .filter((r) => digitsOnly(r[3]) === targetDigits)
-    .map((r) => ({ id: r[0], date: r[1], branch: r[4], total: r[6], status: r[7] }))
+    .map((r) => ({ id: r[0], date: r[1], branch: r[4], status: r[7] }))
     .reverse();
 }
 
@@ -666,7 +686,7 @@ async function mainMenuKeyboard(chatId) {
   if (role === 'сотрудник' || role === 'редактор') {
     rows.push([{ text: await t(chatId, 'btnAddProduct') }]);
   }
-  if (isAdmin(chatId)) {
+  if (await isAdmin(chatId)) {
     rows.push([{ text: await t(chatId, 'btnAdmin') }]);
   }
   return { keyboard: rows, resize_keyboard: true };
@@ -798,15 +818,7 @@ async function handleApText(chatId, text, apState) {
     await sendMessage(chatId, await t(chatId, 'apChooseDesc'));
   } else if (apState.step === 'desc') {
     const desc = text.trim() === '-' ? '' : text.trim();
-    await setApState(chatId, { ...apState, step: 'price', desc });
-    await sendMessage(chatId, await t(chatId, 'apChoosePrice'));
-  } else if (apState.step === 'price') {
-    const price = Number(text.replace(/\D/g, ''));
-    if (!price) {
-      await sendMessage(chatId, await t(chatId, 'apInvalidPrice'));
-      return;
-    }
-    await setApState(chatId, { ...apState, step: 'photos', price, photos: [] });
+    await setApState(chatId, { ...apState, step: 'photos', desc, photos: [] });
     await sendMessage(chatId, await t(chatId, 'apChoosePhotos', 0));
   }
 }
@@ -835,10 +847,50 @@ async function handleApPhotosDone(chatId, apState) {
 }
 
 async function handleApSave(chatId, apState) {
-  await addProductToSheet(apState);
+  const privileged = await isAdmin(chatId); // супер-админ или роль "администратор" — без модерации
+  if (privileged) {
+    await addProductToSheet(apState);
+    await clearApState(chatId);
+    await sendMessage(chatId, await t(chatId, 'apSaved'));
+    await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+    return;
+  }
+
+  // Обычный сотрудник/редактор — товар уходит на модерацию супер-админу
+  const modId = Math.random().toString(36).slice(2, 10);
+  await redis.set(`catalog_moderation:${modId}`, { chatId, product: apState }, { ex: 604800 });
   await clearApState(chatId);
-  await sendMessage(chatId, await t(chatId, 'apSaved'));
+  await sendMessage(chatId, await t(chatId, 'apSentToModeration'));
   await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+
+  const caption = await t(chatId, 'modProductCaption', apState);
+  const keyboard = {
+    inline_keyboard: [[
+      { text: '✅ Одобрить', callback_data: 'modapprove_' + modId },
+      { text: '❌ Отклонить', callback_data: 'modreject_' + modId },
+    ]],
+  };
+  for (const adminId of ADMIN_CHAT_IDS) {
+    if (apState.photos && apState.photos.length) await sendPhoto(adminId, apState.photos[0], caption, keyboard);
+    else await sendMessage(adminId, caption, keyboard);
+  }
+}
+
+async function handleModerationApprove(adminChatId, modId) {
+  const entry = await redis.get(`catalog_moderation:${modId}`);
+  if (!entry) return;
+  await redis.del(`catalog_moderation:${modId}`);
+  await addProductToSheet(entry.product);
+  await sendMessage(entry.chatId, await t(entry.chatId, 'apSaved'));
+  await sendMessage(adminChatId, '✅ Товар одобрен и добавлен в каталог.');
+}
+
+async function handleModerationReject(adminChatId, modId) {
+  const entry = await redis.get(`catalog_moderation:${modId}`);
+  if (!entry) return;
+  await redis.del(`catalog_moderation:${modId}`);
+  await sendMessage(entry.chatId, '❌ Ваш товар был отклонён администратором.');
+  await sendMessage(adminChatId, '❌ Товар отклонён.');
 }
 
 async function handleApCancel(chatId) {
@@ -847,7 +899,31 @@ async function handleApCancel(chatId) {
   await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
 }
 
-async function handleStart(chatId) {
+async function handleAdminInviteClicked(chatId, fromUser) {
+  const name = [fromUser.first_name, fromUser.last_name].filter(Boolean).join(' ').trim() || fromUser.username || String(chatId);
+  await redis.set(`catalog_admpending:${chatId}`, name, { ex: 86400 });
+  const notify = `👑 Пользователь ${name} (id ${chatId}) перешёл по ссылке-приглашению администратора.\n\nПредоставить полный доступ к боту?`;
+  const keyboard = {
+    inline_keyboard: [[
+      { text: '✅ Да, дать доступ', callback_data: 'admgrant_yes_' + chatId },
+      { text: '❌ Нет', callback_data: 'admgrant_no_' + chatId },
+    ]],
+  };
+  for (const adminId of ADMIN_CHAT_IDS) await sendMessage(adminId, notify, keyboard);
+}
+
+async function handleStart(chatId, payload, fromUser) {
+  if (payload && payload.startsWith('admtok_')) {
+    const token = payload.slice('admtok_'.length);
+    const valid = await consumeAdminInviteToken(token);
+    if (valid) {
+      await handleAdminInviteClicked(chatId, fromUser);
+      await sendMessage(chatId, '📨 Ваш запрос отправлен администратору на рассмотрение.');
+    } else {
+      await sendMessage(chatId, '⚠️ Ссылка недействительна или уже использована.');
+    }
+  }
+
   const profile = await getProfile(chatId);
   if (profile && profile.phone) {
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
@@ -879,12 +955,12 @@ async function handleText(chatId, text) {
 
   // Если сотрудник в процессе добавления товара — текст обрабатывается визардом, а не меню
   const apState = await getApState(chatId);
-  if (apState && ['name', 'desc', 'price'].includes(apState.step)) {
+  if (apState && ['name', 'desc'].includes(apState.step)) {
     return handleApText(chatId, text, apState);
   }
 
   // Если админ вводит название новой коллекции
-  if (isAdmin(chatId)) {
+  if (await isAdmin(chatId)) {
     const adminState = await getAdminState(chatId);
     if (adminState && adminState.step === 'addcoll') {
       const name = text.trim();
@@ -910,7 +986,7 @@ async function handleText(chatId, text) {
     return sendMessage(chatId, await t(chatId, 'staffNoAccess'));
   }
   if (text === T.ru.btnAdmin) {
-    if (!isAdmin(chatId)) return; // кнопка и так не показывается чужим, но на всякий случай
+    if (!await isAdmin(chatId)) return; // кнопка и так не показывается чужим, но на всякий случай
     return showAdminMenu(chatId);
   }
   if (text === T.ru.btnLang || text === T.uz.btnLang) {
@@ -1026,7 +1102,7 @@ async function showFinalProducts(chatId, brandIdx, catIdx, origin, editMsgId, pa
   const category = PRODUCT_CATEGORIES[catIdx];
   const products = await getProductsByBrandCategory(brand, category, collection);
   const { slice, totalPages } = paginate(products, page, PAGE_SIZE_PRODUCTS);
-  const rows = slice.map((p) => [{ text: `${p.name} — ${formatPrice(p.price)}`, callback_data: 'prod_' + p.id }]);
+  const rows = slice.map((p) => [{ text: p.name, callback_data: 'prod_' + p.id }]);
   rows.push(
     ...paginationRow(
       page, totalPages,
@@ -1069,18 +1145,14 @@ async function showCart(chatId, editMsgId) {
   if (!ids.length) return sendMessage(chatId, await t(chatId, 'cartEmpty'));
 
   let text = await t(chatId, 'cartHeader');
-  let total = 0;
   const rows = [];
   for (const id of ids) {
     const p = await getProductById(id);
     if (!p) continue;
     const qty = cart[id];
-    const sum = p.price * qty;
-    total += sum;
-    text += (await t(chatId, 'cartLine', p.name, qty, sum)) + '\n';
+    text += (await t(chatId, 'cartLine', p.name, qty)) + '\n';
     rows.push([{ text: await t(chatId, 'btnRemoveItem', p.name), callback_data: 'rm_' + id }]);
   }
-  text += await t(chatId, 'cartTotal', total);
   rows.push([{ text: await t(chatId, 'btnCheckout'), callback_data: 'checkout_start' }]);
   rows.push([{ text: await t(chatId, 'btnClearCart'), callback_data: 'clear_cart' }]);
 
@@ -1099,18 +1171,15 @@ async function startCheckout(chatId) {
 async function confirmOrderPreview(chatId, branch) {
   const cart = await getCart(chatId);
   const profile = await getProfile(chatId);
-  let total = 0;
   let itemsText = '';
   for (const id of Object.keys(cart)) {
     const p = await getProductById(id);
     if (!p) continue;
     const qty = cart[id];
-    const sum = p.price * qty;
-    total += sum;
-    itemsText += `• ${p.name} × ${qty} = ${formatPrice(sum)}\n`;
+    itemsText += `• ${p.name} × ${qty}\n`;
   }
-  await setState(chatId, { branch, total, itemsText });
-  await sendMessage(chatId, await t(chatId, 'orderConfirm', profile.name, profile.phone, branch, itemsText, total), {
+  await setState(chatId, { branch, itemsText });
+  await sendMessage(chatId, await t(chatId, 'orderConfirm', profile.name, profile.phone, branch, itemsText), {
     inline_keyboard: [[
       { text: await t(chatId, 'btnConfirmOrder'), callback_data: 'order_confirm' },
       { text: await t(chatId, 'btnCancelOrder'), callback_data: 'order_cancel' },
@@ -1123,14 +1192,14 @@ async function placeOrder(chatId) {
   const state = await getState(chatId);
   if (!state || !state.branch) return;
 
-  const orderId = await addOrder(profile.name, profile.phone, state.branch, state.itemsText, state.total);
+  const orderId = await addOrder(profile.name, profile.phone, state.branch, state.itemsText);
   await clearCart(chatId);
   await clearState(chatId);
 
   await sendMessage(chatId, await t(chatId, 'orderPlaced', orderId));
   await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
 
-  const notify = `🆕 Новая заявка №${orderId}\n\n👤 ${profile.name}\n📞 ${profile.phone}\n🏬 ${state.branch}\n\n${state.itemsText}\n💰 Итого: ${formatPrice(state.total)}`;
+  const notify = `🆕 Новая заявка №${orderId}\n\n👤 ${profile.name}\n📞 ${profile.phone}\n🏬 ${state.branch}\n\n${state.itemsText}`;
   for (const adminId of ADMIN_CHAT_IDS) await sendMessage(adminId, notify);
 }
 
@@ -1140,7 +1209,7 @@ async function showMyOrders(chatId) {
   if (!orders.length) return sendMessage(chatId, await t(chatId, 'myOrdersEmpty'));
   let text = await t(chatId, 'myOrdersHeader');
   for (const o of orders) {
-    text += (await t(chatId, 'myOrderLine', o.id, o.date, o.branch, o.total, o.status)) + '\n';
+    text += (await t(chatId, 'myOrderLine', o.id, o.date, o.branch, o.status)) + '\n';
   }
   await sendMessage(chatId, text);
 }
@@ -1148,15 +1217,33 @@ async function showMyOrders(chatId) {
 // ==================== АДМИН-ПАНЕЛЬ ====================
 
 async function showAdminMenu(chatId, editMsgId) {
-  const keyboard = {
-    inline_keyboard: [
-      [{ text: await t(chatId, 'adminBtnProducts'), callback_data: 'adm_products' }],
-      [{ text: await t(chatId, 'adminBtnCollections'), callback_data: 'adm_collections' }],
-    ],
-  };
+  const rows = [
+    [{ text: await t(chatId, 'adminBtnProducts'), callback_data: 'adm_products' }],
+    [{ text: await t(chatId, 'adminBtnCollections'), callback_data: 'adm_collections' }],
+  ];
+  if (isSuperAdmin(chatId)) {
+    rows.push([{ text: await t(chatId, 'adminBtnAddAdmin'), callback_data: 'adm_addadmin' }]);
+  }
+  const keyboard = { inline_keyboard: rows };
   const text = await t(chatId, 'adminMenuTitle');
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
+}
+
+function isSuperAdmin(chatId) {
+  return ADMIN_CHAT_IDS.includes(String(chatId));
+}
+
+async function handleAdminGenerateInvite(chatId) {
+  const token = await createAdminInviteToken();
+  const username = await getBotUsername();
+  const link = username
+    ? `https://t.me/${username}?start=admtok_${token}`
+    : '(не удалось получить username бота — проверьте, что бот отвечает на getMe)';
+  await sendMessage(
+    chatId,
+    `🔗 Одноразовая ссылка для назначения администратора (действует 24 часа, работает один раз):\n\n${link}\n\nОтправьте её сотруднику. После перехода по ссылке вам придёт запрос на подтверждение.`
+  );
 }
 
 async function showAdminProducts(chatId, page, editMsgId) {
@@ -1312,24 +1399,47 @@ async function handleCallback(cq) {
     await sendMessage(chatId, await t(chatId, 'orderCancelled'));
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
   } else if (data === 'adm_menu') {
-    if (isAdmin(chatId)) await showAdminMenu(chatId, messageId);
+    if (await isAdmin(chatId)) await showAdminMenu(chatId, messageId);
   } else if (data === 'adm_products') {
-    if (isAdmin(chatId)) await showAdminProducts(chatId, 0, messageId);
+    if (await isAdmin(chatId)) await showAdminProducts(chatId, 0, messageId);
   } else if (data.startsWith('adm_prodpg_')) {
-    if (isAdmin(chatId)) await showAdminProducts(chatId, Number(data.slice(11)), messageId);
+    if (await isAdmin(chatId)) await showAdminProducts(chatId, Number(data.slice(11)), messageId);
   } else if (data.startsWith('adm_delyes_')) {
-    if (isAdmin(chatId)) await handleAdminDelete(chatId, data.slice(11));
+    if (await isAdmin(chatId)) await handleAdminDelete(chatId, data.slice(11));
   } else if (data.startsWith('adm_del_')) {
-    if (isAdmin(chatId)) await showAdminDeleteConfirm(chatId, data.slice(8));
+    if (await isAdmin(chatId)) await showAdminDeleteConfirm(chatId, data.slice(8));
   } else if (data.startsWith('adm_prod_')) {
-    if (isAdmin(chatId)) await showAdminProduct(chatId, data.slice(9));
+    if (await isAdmin(chatId)) await showAdminProduct(chatId, data.slice(9));
   } else if (data === 'adm_collections') {
-    if (isAdmin(chatId)) await showAdminCollections(chatId, messageId);
+    if (await isAdmin(chatId)) await showAdminCollections(chatId, messageId);
   } else if (data === 'adm_addcoll') {
-    if (isAdmin(chatId)) {
+    if (await isAdmin(chatId)) {
       await setAdminState(chatId, { step: 'addcoll' });
       await sendMessage(chatId, await t(chatId, 'adminAddCollectionPrompt'));
     }
+  } else if (data === 'adm_addadmin') {
+    if (isSuperAdmin(chatId)) await handleAdminGenerateInvite(chatId);
+  } else if (data.startsWith('admgrant_yes_')) {
+    if (isSuperAdmin(chatId)) {
+      const targetChatId = data.slice('admgrant_yes_'.length);
+      const name = (await redis.get(`catalog_admpending:${targetChatId}`)) || targetChatId;
+      await redis.del(`catalog_admpending:${targetChatId}`);
+      await addStaff(targetChatId, name, 'администратор');
+      await setStaffRoleCached(targetChatId, 'администратор');
+      await sendMessage(targetChatId, '👑 Вам предоставлен полный доступ администратора. Нажмите /start, чтобы увидеть меню.');
+      await sendMessage(chatId, `✅ ${name} теперь администратор.`);
+    }
+  } else if (data.startsWith('admgrant_no_')) {
+    if (isSuperAdmin(chatId)) {
+      const targetChatId = data.slice('admgrant_no_'.length);
+      await redis.del(`catalog_admpending:${targetChatId}`);
+      await sendMessage(targetChatId, '⛔ Запрос на администраторский доступ отклонён.');
+      await sendMessage(chatId, 'Отклонено.');
+    }
+  } else if (data.startsWith('modapprove_')) {
+    if (isSuperAdmin(chatId)) await handleModerationApprove(chatId, data.slice('modapprove_'.length));
+  } else if (data.startsWith('modreject_')) {
+    if (isSuperAdmin(chatId)) await handleModerationReject(chatId, data.slice('modreject_'.length));
   }
 }
 
@@ -1351,8 +1461,9 @@ module.exports = async (req, res) => {
         }
       } else if (msg.contact) {
         await handleContact(chatId, msg.contact);
-      } else if (msg.text === '/start') {
-        await handleStart(chatId);
+      } else if (msg.text && msg.text.startsWith('/start')) {
+        const payload = msg.text.slice('/start'.length).trim() || null;
+        await handleStart(chatId, payload, msg.from);
       } else if (msg.text === '/reset') {
         await handleReset(chatId);
       } else if (msg.text === '/staff') {
