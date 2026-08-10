@@ -58,7 +58,7 @@ const BRANCHES = [
 const T = {
   ru: {
     shareContact: '📱 Отправить номер телефона',
-    askContact: '👋 <b>Добро пожаловать в Europa Luxe &amp; Elegance!</b>\n\nЭксклюзивный каталог премиальных брендов — прямо в этом чате.\n\nЧтобы открыть каталог, поделитесь номером телефона 👇',
+    askContact: '✨ <b>Europa Luxe &amp; Elegance &amp; Castangia</b>\n\n38 премиальных брендов мужской моды — в одном каталоге, всегда под рукой.\n\n🏷 Смотрите новые коллекции первыми\n🛍 Выбирайте товары в пару касаний\n🤝 Общайтесь напрямую со своим личным продавцом\n\nЧтобы войти — поделитесь номером телефона 👇',
     resetDone: '🔄 Готово, забыл ваш номер. Напишите /start, чтобы привязать бота заново.',
     contactSaved: (name) => `✅ Спасибо${name ? ', <b>' + esc(name) + '</b>' : ''}! Каталог открыт.`,
     mainMenu: '✨ <b>Главное меню</b>\n\nЧто хотите сделать?',
@@ -158,7 +158,7 @@ const T = {
   },
   uz: {
     shareContact: '📱 Telefon raqamni yuborish',
-    askContact: "👋 <b>Europa Luxe &amp; Elegance botiga xush kelibsiz!</b>\n\nPremium brendlar katalogi — shu chatda.\n\nKatalogni ochish uchun telefon raqamingizni ulashing 👇",
+    askContact: "✨ <b>Europa Luxe &amp; Elegance &amp; Castangia</b>\n\n38 ta premium erkaklar modasi brendi — bitta katalogda, doim qo'lingizda.\n\n🏷 Yangi kolleksiyalarni birinchi bo'lib ko'ring\n🛍 Mahsulotlarni bir necha bosishda tanlang\n🤝 Shaxsiy sotuvchingiz bilan bevosita muloqot qiling\n\nKirish uchun telefon raqamingizni ulashing 👇",
     resetDone: "🔄 Tayyor, raqamingizni unutdim. Botni qayta ulash uchun /start yozing.",
     contactSaved: (name) => `✅ Rahmat${name ? ', <b>' + esc(name) + '</b>' : ''}! Katalog ochiq.`,
     mainMenu: '✨ <b>Asosiy menyu</b>\n\nNima qilmoqchisiz?',
