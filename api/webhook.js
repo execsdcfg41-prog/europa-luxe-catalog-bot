@@ -739,10 +739,11 @@ async function mainMenuKeyboard(chatId) {
     [{ text: await t(chatId, 'btnMyOrders') }, { text: await t(chatId, 'btnLang') }],
   ];
   const role = await getStaffRoleCached(chatId);
-  if (role === 'сотрудник' || role === 'редактор') {
+  const privileged = await isAdmin(chatId);
+  if (role === 'сотрудник' || role === 'редактор' || privileged) {
     rows.push([{ text: await t(chatId, 'btnAddProduct') }]);
   }
-  if (await isAdmin(chatId)) {
+  if (privileged) {
     rows.push([{ text: await t(chatId, 'btnAdmin') }]);
   }
   return { keyboard: rows, resize_keyboard: true };
@@ -1038,7 +1039,7 @@ async function handleText(chatId, text) {
   if (text === T.ru.btnMyOrders || text === T.uz.btnMyOrders) return showMyOrders(chatId);
   if (text === T.ru.btnAddProduct) {
     const role = await getStaffRoleCached(chatId);
-    if (role === 'сотрудник' || role === 'редактор') return startAddProduct(chatId);
+    if (role === 'сотрудник' || role === 'редактор' || (await isAdmin(chatId))) return startAddProduct(chatId);
     return sendMessage(chatId, await t(chatId, 'staffNoAccess'));
   }
   if (text === T.ru.btnAdmin) {
