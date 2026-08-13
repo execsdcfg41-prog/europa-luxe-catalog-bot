@@ -87,10 +87,16 @@ const T = {
     cartLine: (name, qty) => `▫️ ${esc(name)} <b>× ${qty}</b>`,
     btnCheckout: '✅ Оформить заказ',
     btnContactSeller: '📞 Связаться с продавцом',
-    sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах и свяжется с вами.',
+    sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах (с фото). Он свяжется с вами.\n\n💬 Можете написать ему прямо сюда — в течение 7 дней ваши сообщения будут пересылаться ему через бота.',
     sellerNotifiedGeneric: '✅ Мы получили информацию о выбранных товарах, с вами свяжутся.',
     btnMessageSeller: (name) => `💬 Написать ${name}`,
     sellerNotifyText: (name, phone, itemsText) => `🛍 <b>Клиент интересуется товарами</b>\n\n👤 ${esc(name)}\n📞 ${esc(phone)}\n\n${itemsText}`,
+    relayMessagePrefix: (name, phone) => `💬 <b>Сообщение от клиента</b>\n👤 ${esc(name)} · 📞 ${esc(phone)}\n\n`,
+    relaySent: '✅ Сообщение отправлено продавцу.',
+    btnReplyToClient: '💬 Ответить клиенту',
+    sellerReplyModeOn: '✏️ Режим ответа включён. Напишите сообщение — оно уйдёт клиенту через бота.',
+    clientReplyPrefix: '💬 <b>Ответ от продавца</b>\n\n',
+    sellerReplySent: '✅ Отправлено клиенту.',
     btnClearCart: '🗑 Очистить корзину',
     btnRemoveItem: (name) => `❌ Убрать: ${name}`,
     cartCleared: '🗑 Корзина очищена.',
@@ -192,10 +198,16 @@ const T = {
     cartLine: (name, qty) => `▫️ ${esc(name)} <b>× ${qty}</b>`,
     btnCheckout: '✅ Buyurtma berish',
     btnContactSeller: '📞 Связаться с продавцом',
-    sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах и свяжется с вами.',
+    sellerNotified: '✅ Ваш продавец уведомлён о выбранных товарах (с фото). Он свяжется с вами.\n\n💬 Можете написать ему прямо сюда — в течение 7 дней ваши сообщения будут пересылаться ему через бота.',
     sellerNotifiedGeneric: '✅ Мы получили информацию о выбранных товарах, с вами свяжутся.',
     btnMessageSeller: (name) => `💬 Написать ${name}`,
     sellerNotifyText: (name, phone, itemsText) => `🛍 <b>Клиент интересуется товарами</b>\n\n👤 ${esc(name)}\n📞 ${esc(phone)}\n\n${itemsText}`,
+    relayMessagePrefix: (name, phone) => `💬 <b>Сообщение от клиента</b>\n👤 ${esc(name)} · 📞 ${esc(phone)}\n\n`,
+    relaySent: '✅ Сообщение отправлено продавцу.',
+    btnReplyToClient: '💬 Ответить клиенту',
+    sellerReplyModeOn: '✏️ Режим ответа включён. Напишите сообщение — оно уйдёт клиенту через бота.',
+    clientReplyPrefix: '💬 <b>Ответ от продавца</b>\n\n',
+    sellerReplySent: '✅ Отправлено клиенту.',
     btnClearCart: '🗑 Savatni tozalash',
     btnRemoveItem: (name) => `❌ O'chirish: ${name}`,
     cartCleared: "🗑 Savat tozalandi.",
@@ -373,6 +385,23 @@ async function getSelectedCollection(chatId) {
 }
 async function setSelectedCollection(chatId, collection) {
   await redis.set(`catalog_curcoll:${chatId}`, collection, { ex: 21600 });
+}
+
+// Односторонняя пересылка "клиент → продавец" через бота, на 7 дней после нажатия "Связаться с продавцом"
+const RELAY_TTL = 7 * 24 * 60 * 60; // 7 дней
+async function setRelay(clientChatId, sellerChatId) {
+  await redis.set(`catalog_relay:${clientChatId}`, String(sellerChatId), { ex: RELAY_TTL });
+}
+async function getRelay(clientChatId) {
+  return (await redis.get(`catalog_relay:${clientChatId}`)) || null;
+}
+
+// Запасной вариант обратной связи "продавец → клиент" через бота, когда прямая ссылка на продавца недоступна
+async function setSellerReplyTarget(sellerChatId, clientChatId) {
+  await redis.set(`catalog_sellerreply:${sellerChatId}`, String(clientChatId), { ex: RELAY_TTL });
+}
+async function getSellerReplyTarget(sellerChatId) {
+  return (await redis.get(`catalog_sellerreply:${sellerChatId}`)) || null;
 }
 
 // Состояние админ-панели (например, ввод названия новой коллекции)
@@ -1054,6 +1083,24 @@ async function handleText(chatId, text) {
       ]],
     });
   }
+
+  // Если у клиента активна связь с продавцом (7 дней после "Связаться с продавцом") — пересылаем текст ему
+  const relaySellerChatId = await getRelay(chatId);
+  if (relaySellerChatId) {
+    const profile = await getProfile(chatId);
+    await sendMessage(relaySellerChatId, (await t(chatId, 'relayMessagePrefix', profile.name, profile.phone)) + esc(text));
+    await sendMessage(chatId, await t(chatId, 'relaySent'));
+    return;
+  }
+
+  // Если продавец в режиме "Ответить клиенту" (запасной вариант без прямой ссылки) — пересылаем ответ клиенту
+  const replyToClientId = await getSellerReplyTarget(chatId);
+  if (replyToClientId) {
+    await sendMessage(replyToClientId, (await t(chatId, 'clientReplyPrefix')) + esc(text));
+    await sendMessage(chatId, await t(chatId, 'sellerReplySent'));
+    return;
+  }
+
   await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
 }
 
@@ -1223,23 +1270,44 @@ async function handleContactSeller(chatId) {
   if (!Object.keys(cart).length) return sendMessage(chatId, await t(chatId, 'cartEmpty'));
 
   const profile = await getProfile(chatId);
+  const products = [];
   let itemsText = '';
   for (const id of Object.keys(cart)) {
     const p = await getProductById(id);
     if (!p) continue;
+    products.push({ product: p, qty: cart[id] });
     itemsText += `▫️ ${esc(p.name)}${p.brand ? ' (' + esc(p.brand) + ')' : ''} <b>× ${cart[id]}</b>\n`;
   }
 
   const seller = profile.sellerName ? await getSellerByName(profile.sellerName) : null;
-  const notifyText = await t(chatId, 'sellerNotifyText', profile.name, profile.phone, itemsText);
 
   if (seller && seller.chatId) {
-    await sendMessage(seller.chatId, notifyText);
+    // Отправляем продавцу все фото каждого товара отдельным альбомом
+    for (const { product: p, qty } of products) {
+      const caption = `🛍 <b>${esc(p.name)}</b>${p.brand ? '\n🏷 ' + esc(p.brand) : ''}\n<b>Количество: ${qty}</b>${p.desc ? '\n\n' + esc(p.desc) : ''}`;
+      if (p.photos.length > 1) {
+        await sendMediaGroup(seller.chatId, p.photos, caption);
+      } else if (p.photos.length === 1) {
+        await sendPhoto(seller.chatId, p.photos[0], caption);
+      } else {
+        await sendMessage(seller.chatId, caption);
+      }
+    }
+    const introText = await t(chatId, 'sellerNotifyText', profile.name, profile.phone, itemsText);
+    const replyButton = !seller.username
+      ? { inline_keyboard: [[{ text: await t(chatId, 'btnReplyToClient'), callback_data: 'sellreply_' + chatId }]] }
+      : undefined;
+    await sendMessage(seller.chatId, introText, replyButton);
+
+    // Односторонняя пересылка: клиент сможет писать продавцу через бота 7 дней
+    await setRelay(chatId, seller.chatId);
+
     const keyboard = seller.username
       ? { inline_keyboard: [[{ text: await t(chatId, 'btnMessageSeller', profile.sellerName), url: `https://t.me/${seller.username}` }]] }
       : undefined;
     await sendMessage(chatId, await t(chatId, 'sellerNotified'), keyboard);
   } else {
+    const notifyText = await t(chatId, 'sellerNotifyText', profile.name, profile.phone, itemsText);
     for (const adminId of ADMIN_CHAT_IDS) await sendMessage(adminId, notifyText);
     await sendMessage(chatId, await t(chatId, 'sellerNotifiedGeneric'));
   }
@@ -1517,6 +1585,10 @@ async function handleCallback(cq) {
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
   } else if (data === 'contact_seller') {
     await handleContactSeller(chatId);
+  } else if (data.startsWith('sellreply_')) {
+    const clientChatId = data.slice('sellreply_'.length);
+    await setSellerReplyTarget(chatId, clientChatId);
+    await sendMessage(chatId, await t(chatId, 'sellerReplyModeOn'));
   } else if (data === 'checkout_start') {
     await startCheckout(chatId);
   } else if (data.startsWith('branch_')) {
