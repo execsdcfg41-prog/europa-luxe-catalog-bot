@@ -97,6 +97,15 @@ const T = {
     sellerReplyModeOn: '✏️ Режим ответа включён. Напишите сообщение — оно уйдёт клиенту через бота.',
     clientReplyPrefix: '💬 <b>Ответ от продавца</b>\n\n',
     sellerReplySent: '✅ Отправлено клиенту.',
+    btnMySeller: '🤝 Мой продавец',
+    mySellerNone: 'За вами пока не закреплён продавец.',
+    mySellerCard: (name) => `🤝 <b>Ваш персональный продавец:</b>\n${esc(name)}`,
+    btnChangeSeller: '🔄 Сменить продавца',
+    chooseSeller: '🤝 <b>Выберите своего продавца:</b>',
+    chooseSellerFirstTime: '👋 Перед началом — выберите вашего персонального продавца:',
+    noSellers: 'Список продавцов пока пуст. Обратитесь к администратору.',
+    sellerWelcomeCaption: (name) => `👋 Знакомьтесь — это <b>${esc(name)}</b>, ваш персональный продавец. Он всегда на связи!`,
+    sellerAssigned: (name) => `✅ Ваш продавец теперь — <b>${esc(name)}</b>.`,
     btnClearCart: '🗑 Очистить корзину',
     btnRemoveItem: (name) => `❌ Убрать: ${name}`,
     cartCleared: '🗑 Корзина очищена.',
@@ -163,6 +172,15 @@ const T = {
     adminCollectionHasProducts: (name, count) => `⚠️ Нельзя удалить «${name}» — в ней ещё ${count} товар(ов). Сначала удалите или перенесите их в другую коллекцию (через лист «Каталог» или админ-панель → Товары).`,
     adminConfirmDeleteCollection: (name) => `Точно удалить коллекцию «${name}»? В ней нет товаров, действие необратимо.`,
     adminCollectionDeleted: (name) => `🗑 Коллекция «${name}» удалена.`,
+    adminBtnSellers: '🧑\u200d💼 Продавцы',
+    adminSellersTitle: '🧑\u200d💼 Продавцы:',
+    adminSellerCard: (s) => `👤 ${esc(s.name)}\nФото: ${s.photo ? '✅ есть' : '❌ нет'}\nВидео: ${s.video ? '✅ есть' : '❌ нет'}`,
+    adminBtnUploadPhoto: '📷 Загрузить/заменить фото',
+    adminBtnUploadVideo: '🎥 Загрузить/заменить видео',
+    adminAskSellerPhoto: 'Отправьте фото продавца:',
+    adminAskSellerVideo: 'Отправьте видео-приветствие продавца:',
+    adminSellerPhotoSaved: '✅ Фото сохранено.',
+    adminSellerVideoSaved: '✅ Видео сохранено.',
     adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
@@ -208,6 +226,15 @@ const T = {
     sellerReplyModeOn: '✏️ Режим ответа включён. Напишите сообщение — оно уйдёт клиенту через бота.',
     clientReplyPrefix: '💬 <b>Ответ от продавца</b>\n\n',
     sellerReplySent: '✅ Отправлено клиенту.',
+    btnMySeller: '🤝 Мой продавец',
+    mySellerNone: 'За вами пока не закреплён продавец.',
+    mySellerCard: (name) => `🤝 <b>Ваш персональный продавец:</b>\n${esc(name)}`,
+    btnChangeSeller: '🔄 Сменить продавца',
+    chooseSeller: '🤝 <b>Выберите своего продавца:</b>',
+    chooseSellerFirstTime: '👋 Перед началом — выберите вашего персонального продавца:',
+    noSellers: 'Список продавцов пока пуст. Обратитесь к администратору.',
+    sellerWelcomeCaption: (name) => `👋 Знакомьтесь — это <b>${esc(name)}</b>, ваш персональный продавец. Он всегда на связи!`,
+    sellerAssigned: (name) => `✅ Ваш продавец теперь — <b>${esc(name)}</b>.`,
     btnClearCart: '🗑 Savatni tozalash',
     btnRemoveItem: (name) => `❌ O'chirish: ${name}`,
     cartCleared: "🗑 Savat tozalandi.",
@@ -274,6 +301,15 @@ const T = {
     adminCollectionHasProducts: (name, count) => `⚠️ Нельзя удалить «${name}» — в ней ещё ${count} товар(ов). Сначала удалите или перенесите их в другую коллекцию (через лист «Каталог» или админ-панель → Товары).`,
     adminConfirmDeleteCollection: (name) => `Точно удалить коллекцию «${name}»? В ней нет товаров, действие необратимо.`,
     adminCollectionDeleted: (name) => `🗑 Коллекция «${name}» удалена.`,
+    adminBtnSellers: '🧑\u200d💼 Продавцы',
+    adminSellersTitle: '🧑\u200d💼 Продавцы:',
+    adminSellerCard: (s) => `👤 ${esc(s.name)}\nФото: ${s.photo ? '✅ есть' : '❌ нет'}\nВидео: ${s.video ? '✅ есть' : '❌ нет'}`,
+    adminBtnUploadPhoto: '📷 Загрузить/заменить фото',
+    adminBtnUploadVideo: '🎥 Загрузить/заменить видео',
+    adminAskSellerPhoto: 'Отправьте фото продавца:',
+    adminAskSellerVideo: 'Отправьте видео-приветствие продавца:',
+    adminSellerPhotoSaved: '✅ Фото сохранено.',
+    adminSellerVideoSaved: '✅ Видео сохранено.',
     adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
@@ -404,6 +440,14 @@ async function getSellerReplyTarget(sellerChatId) {
   return (await redis.get(`catalog_sellerreply:${sellerChatId}`)) || null;
 }
 
+// Постоянная привязка клиента к продавцу (не зависит от листа "Клиенты", можно сменить в самом боте)
+async function getAssignedSeller(chatId) {
+  return (await redis.get(`catalog_assignedseller:${chatId}`)) || null;
+}
+async function setAssignedSeller(chatId, sellerName) {
+  await redis.set(`catalog_assignedseller:${chatId}`, sellerName);
+}
+
 // Состояние админ-панели (например, ввод названия новой коллекции)
 async function getAdminState(chatId) {
   return (await redis.get(`catalog_adminstate:${chatId}`)) || null;
@@ -516,9 +560,21 @@ async function ensureSheetsExist() {
   if (!titles.includes(SELLERS_SHEET)) {
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: `${SELLERS_SHEET}!A1:C1`,
+      range: `${SELLERS_SHEET}!A1:E1`,
       valueInputOption: 'RAW',
-      requestBody: { values: [['Имя (как в листе Клиенты)', 'chat_id', 'Username (необязательно)']] },
+      requestBody: { values: [['Имя (как в листе Клиенты)', 'chat_id', 'Username (необязательно)', 'Фото (file_id)', 'Видео (file_id)']] },
+    });
+  }
+
+  // Добавляем колонки "Фото"/"Видео" (D/E) в лист "Продавцы", если их ещё нет — актуально для уже созданного листа
+  const sellersHeaderCheck = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${SELLERS_SHEET}!D1:E1` });
+  const sellersHeaderVals = (sellersHeaderCheck.data.values && sellersHeaderCheck.data.values[0]) || [];
+  if (!sellersHeaderVals[0] || !sellersHeaderVals[1]) {
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `${SELLERS_SHEET}!D1:E1`,
+      valueInputOption: 'RAW',
+      requestBody: { values: [['Фото (file_id)', 'Видео (file_id)']] },
     });
   }
 
@@ -562,14 +618,36 @@ async function findClientByPhone(phone) {
   return null;
 }
 
+async function getAllSellers() {
+  const sheets = await getSheetsClient();
+  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${SELLERS_SHEET}!A:E` });
+  const rows = (result.data.values || []).slice(1);
+  return rows
+    .map((r, i) => ({
+      rowIndex: i + 2, // номер строки в таблице
+      name: (r[0] || '').trim(),
+      chatId: r[1] || '',
+      username: (r[2] || '').trim() || null,
+      photo: (r[3] || '').trim() || null,
+      video: (r[4] || '').trim() || null,
+    }))
+    .filter((s) => s.name && s.chatId);
+}
+
 async function getSellerByName(name) {
   if (!name) return null;
+  const all = await getAllSellers();
+  return all.find((s) => s.name === name.trim()) || null;
+}
+
+async function updateSellerMedia(rowIndex, column, fileId) {
   const sheets = await getSheetsClient();
-  const result = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range: `${SELLERS_SHEET}!A:C` });
-  const rows = (result.data.values || []).slice(1);
-  const row = rows.find((r) => (r[0] || '').trim() === name.trim());
-  if (!row || !row[1]) return null;
-  return { chatId: row[1], username: (row[2] || '').trim() || null };
+  await sheets.spreadsheets.values.update({
+    spreadsheetId: SHEET_ID,
+    range: `${SELLERS_SHEET}!${column}${rowIndex}`,
+    valueInputOption: 'RAW',
+    requestBody: { values: [[fileId]] },
+  });
 }
 
 async function addClientIfMissing(name, phone) {
@@ -765,7 +843,8 @@ function esc(s) {
 async function mainMenuKeyboard(chatId) {
   const rows = [
     [{ text: await t(chatId, 'btnCatalog') }, { text: await t(chatId, 'btnCart') }],
-    [{ text: await t(chatId, 'btnMyOrders') }, { text: await t(chatId, 'btnLang') }],
+    [{ text: await t(chatId, 'btnMySeller') }, { text: await t(chatId, 'btnMyOrders') }],
+    [{ text: await t(chatId, 'btnLang') }],
   ];
   const role = await getStaffRoleCached(chatId);
   const privileged = await isAdmin(chatId);
@@ -1022,6 +1101,52 @@ async function handleStart(chatId, payload, fromUser) {
   }
 }
 
+async function sendSellerWelcome(chatId, sellerName) {
+  const seller = await getSellerByName(sellerName);
+  if (!seller) return;
+  const caption = await t(chatId, 'sellerWelcomeCaption', sellerName);
+  if (seller.photo) await sendPhoto(chatId, seller.photo, caption);
+  else await sendMessage(chatId, caption);
+  if (seller.video) await tg('sendVideo', { chat_id: chatId, video: seller.video, caption: undefined, parse_mode: 'HTML' });
+}
+
+async function showSellerPicker(chatId, page, editMsgId, mode) {
+  // mode: 'f' — первый выбор у нового клиента, 'c' — смена продавца
+  const sellers = await getAllSellers();
+  if (!sellers.length) return sendMessage(chatId, await t(chatId, 'noSellers'));
+  const { slice, totalPages } = paginate(sellers, page, PAGE_SIZE_LIST);
+  const rows = slice.map((s) => [{ text: s.name, callback_data: `selpick_${mode}_${sellers.indexOf(s)}` }]);
+  rows.push(...paginationRow(page, totalPages, `selpickpg_${mode}_${page - 1}`, `selpickpg_${mode}_${page + 1}`));
+  if (mode === 'c') {
+    rows.push([{ text: await t(chatId, 'backToEntry'), callback_data: 'my_seller' }]);
+  }
+  const keyboard = { inline_keyboard: rows };
+  const text = mode === 'f' ? await t(chatId, 'chooseSellerFirstTime') : await t(chatId, 'chooseSeller');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function handleSellerPick(chatId, mode, idx) {
+  const sellers = await getAllSellers();
+  const seller = sellers[idx];
+  if (!seller) return;
+  await setAssignedSeller(chatId, seller.name);
+  await sendSellerWelcome(chatId, seller.name);
+  if (mode === 'f') {
+    await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+  } else {
+    await sendMessage(chatId, await t(chatId, 'sellerAssigned', seller.name));
+  }
+}
+
+async function showMySeller(chatId, editMsgId) {
+  const sellerName = await getAssignedSeller(chatId);
+  const keyboard = { inline_keyboard: [[{ text: await t(chatId, 'btnChangeSeller'), callback_data: 'seller_change_start' }]] };
+  const text = sellerName ? await t(chatId, 'mySellerCard', sellerName) : await t(chatId, 'mySellerNone');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
 async function handleContact(chatId, contact) {
   const phone = normalizePhone(contact.phone_number);
   const name = [contact.first_name, contact.last_name].filter(Boolean).join(' ').trim();
@@ -1030,9 +1155,22 @@ async function handleContact(chatId, contact) {
   const displayName = existing ? existing.name || name : name;
   if (!existing) await addClientIfMissing(name, phone);
 
-  await setProfile(chatId, { phone, name: displayName, sellerName: existing ? existing.sellerName : '' });
+  await setProfile(chatId, { phone, name: displayName });
   await sendMessage(chatId, await t(chatId, 'contactSaved', displayName), { remove_keyboard: true });
-  await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+
+  const alreadyAssigned = await getAssignedSeller(chatId);
+  if (alreadyAssigned) {
+    await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+    return;
+  }
+
+  if (existing && existing.sellerName) {
+    await setAssignedSeller(chatId, existing.sellerName);
+    await sendSellerWelcome(chatId, existing.sellerName);
+    await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
+  } else {
+    await showSellerPicker(chatId, 0, null, 'f');
+  }
 }
 
 async function handleText(chatId, text) {
@@ -1066,6 +1204,7 @@ async function handleText(chatId, text) {
   if (text === T.ru.btnCatalog || text === T.uz.btnCatalog) return showCollections(chatId);
   if (text === T.ru.btnCart || text === T.uz.btnCart) return showCart(chatId);
   if (text === T.ru.btnMyOrders || text === T.uz.btnMyOrders) return showMyOrders(chatId);
+  if (text === T.ru.btnMySeller) return showMySeller(chatId);
   if (text === T.ru.btnAddProduct) {
     const role = await getStaffRoleCached(chatId);
     if (role === 'сотрудник' || role === 'редактор' || (await isAdmin(chatId))) return startAddProduct(chatId);
@@ -1279,7 +1418,8 @@ async function handleContactSeller(chatId) {
     itemsText += `▫️ ${esc(p.name)}${p.brand ? ' (' + esc(p.brand) + ')' : ''} <b>× ${cart[id]}</b>\n`;
   }
 
-  const seller = profile.sellerName ? await getSellerByName(profile.sellerName) : null;
+  const assignedSellerName = await getAssignedSeller(chatId);
+  const seller = assignedSellerName ? await getSellerByName(assignedSellerName) : null;
 
   if (seller && seller.chatId) {
     // Отправляем продавцу все фото каждого товара отдельным альбомом
@@ -1303,7 +1443,7 @@ async function handleContactSeller(chatId) {
     await setRelay(chatId, seller.chatId);
 
     const keyboard = seller.username
-      ? { inline_keyboard: [[{ text: await t(chatId, 'btnMessageSeller', profile.sellerName), url: `https://t.me/${seller.username}` }]] }
+      ? { inline_keyboard: [[{ text: await t(chatId, 'btnMessageSeller', assignedSellerName), url: `https://t.me/${seller.username}` }]] }
       : undefined;
     await sendMessage(chatId, await t(chatId, 'sellerNotified'), keyboard);
   } else {
@@ -1372,6 +1512,7 @@ async function showAdminMenu(chatId, editMsgId) {
   const rows = [
     [{ text: await t(chatId, 'adminBtnProducts'), callback_data: 'adm_products' }],
     [{ text: await t(chatId, 'adminBtnCollections'), callback_data: 'adm_collections' }],
+    [{ text: await t(chatId, 'adminBtnSellers'), callback_data: 'adm_sellers' }],
   ];
   if (isSuperAdmin(chatId)) {
     rows.push([{ text: await t(chatId, 'adminBtnAddAdmin'), callback_data: 'adm_addadmin' }]);
@@ -1379,6 +1520,35 @@ async function showAdminMenu(chatId, editMsgId) {
   const keyboard = { inline_keyboard: rows };
   const text = await t(chatId, 'adminMenuTitle');
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showAdminSellers(chatId, page, editMsgId) {
+  const sellers = await getAllSellers();
+  if (!sellers.length) return sendMessage(chatId, await t(chatId, 'noSellers'));
+  const { slice, totalPages } = paginate(sellers, page, PAGE_SIZE_LIST);
+  const rows = slice.map((s) => [{ text: s.name, callback_data: 'adm_sel_' + sellers.indexOf(s) }]);
+  rows.push(...paginationRow(page, totalPages, 'adm_selpg_' + (page - 1), 'adm_selpg_' + (page + 1)));
+  rows.push([{ text: await t(chatId, 'adminBackToMenu'), callback_data: 'adm_menu' }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'adminSellersTitle');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function showAdminSellerCard(chatId, idx) {
+  const sellers = await getAllSellers();
+  const s = sellers[idx];
+  if (!s) return;
+  const text = await t(chatId, 'adminSellerCard', s);
+  const keyboard = {
+    inline_keyboard: [
+      [{ text: await t(chatId, 'adminBtnUploadPhoto'), callback_data: 'adm_selphoto_' + idx }],
+      [{ text: await t(chatId, 'adminBtnUploadVideo'), callback_data: 'adm_selvideo_' + idx }],
+      [{ text: await t(chatId, 'adminBackToList'), callback_data: 'adm_sellers' }],
+    ],
+  };
+  if (s.photo) await sendPhoto(chatId, s.photo, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
 }
 
@@ -1585,6 +1755,16 @@ async function handleCallback(cq) {
     await sendMessage(chatId, await t(chatId, 'mainMenu'), await mainMenuKeyboard(chatId));
   } else if (data === 'contact_seller') {
     await handleContactSeller(chatId);
+  } else if (data === 'my_seller') {
+    await showMySeller(chatId, messageId);
+  } else if (data === 'seller_change_start') {
+    await showSellerPicker(chatId, 0, messageId, 'c');
+  } else if (data.startsWith('selpickpg_')) {
+    const [mode, page] = data.slice(10).split('_');
+    await showSellerPicker(chatId, Number(page), messageId, mode);
+  } else if (data.startsWith('selpick_')) {
+    const [mode, idxStr] = data.slice(8).split('_');
+    await handleSellerPick(chatId, mode, Number(idxStr));
   } else if (data.startsWith('sellreply_')) {
     const clientChatId = data.slice('sellreply_'.length);
     await setSellerReplyTarget(chatId, clientChatId);
@@ -1624,6 +1804,22 @@ async function handleCallback(cq) {
     if (await isAdmin(chatId)) await handleAdminDeleteCollectionConfirm(chatId, Number(data.slice(15)));
   } else if (data.startsWith('adm_delcoll_')) {
     if (await isAdmin(chatId)) await handleAdminDeleteCollectionRequest(chatId, Number(data.slice(12)));
+  } else if (data === 'adm_sellers') {
+    if (await isAdmin(chatId)) await showAdminSellers(chatId, 0, messageId);
+  } else if (data.startsWith('adm_selpg_')) {
+    if (await isAdmin(chatId)) await showAdminSellers(chatId, Number(data.slice(10)), messageId);
+  } else if (data.startsWith('adm_selphoto_')) {
+    if (await isAdmin(chatId)) {
+      await setAdminState(chatId, { step: 'selphoto', sellerIdx: Number(data.slice(13)) });
+      await sendMessage(chatId, await t(chatId, 'adminAskSellerPhoto'));
+    }
+  } else if (data.startsWith('adm_selvideo_')) {
+    if (await isAdmin(chatId)) {
+      await setAdminState(chatId, { step: 'selvideo', sellerIdx: Number(data.slice(13)) });
+      await sendMessage(chatId, await t(chatId, 'adminAskSellerVideo'));
+    }
+  } else if (data.startsWith('adm_sel_')) {
+    if (await isAdmin(chatId)) await showAdminSellerCard(chatId, Number(data.slice(8)));
   } else if (data === 'adm_addadmin') {
     if (isSuperAdmin(chatId)) await handleAdminGenerateInvite(chatId);
   } else if (data.startsWith('admgrant_yes_')) {
@@ -1662,9 +1858,31 @@ module.exports = async (req, res) => {
       const chatId = msg.chat.id;
       if (msg.photo) {
         const apState = await getApState(chatId);
+        const adminState = await getAdminState(chatId);
         if (apState && apState.step === 'photos') {
           const fileId = msg.photo[msg.photo.length - 1].file_id; // самое крупное разрешение
           await handleApPhoto(chatId, fileId, apState);
+        } else if (adminState && adminState.step === 'selphoto' && (await isAdmin(chatId))) {
+          const fileId = msg.photo[msg.photo.length - 1].file_id;
+          const sellers = await getAllSellers();
+          const s = sellers[adminState.sellerIdx];
+          if (s) {
+            await updateSellerMedia(s.rowIndex, 'D', fileId);
+            await clearAdminState(chatId);
+            await sendMessage(chatId, await t(chatId, 'adminSellerPhotoSaved'));
+          }
+        }
+      } else if (msg.video) {
+        const adminState = await getAdminState(chatId);
+        if (adminState && adminState.step === 'selvideo' && (await isAdmin(chatId))) {
+          const fileId = msg.video.file_id;
+          const sellers = await getAllSellers();
+          const s = sellers[adminState.sellerIdx];
+          if (s) {
+            await updateSellerMedia(s.rowIndex, 'E', fileId);
+            await clearAdminState(chatId);
+            await sendMessage(chatId, await t(chatId, 'adminSellerVideoSaved'));
+          }
         }
       } else if (msg.contact) {
         await handleContact(chatId, msg.contact);
