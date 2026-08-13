@@ -181,6 +181,10 @@ const T = {
     adminAskSellerVideo: 'Отправьте видео-приветствие продавца:',
     adminSellerPhotoSaved: '✅ Фото сохранено.',
     adminSellerVideoSaved: '✅ Видео сохранено.',
+    adminBtnSyncSellers: (n) => `🆕 Новых сотрудников: ${n} — добавить`,
+    adminNoNewSellers: 'Новых сотрудников нет — все уже добавлены в продавцы.',
+    adminSyncSellersTitle: 'Выберите сотрудника, чтобы добавить его в продавцы:',
+    adminSellerAdded: (name) => `✅ ${esc(name)} добавлен(а) в продавцы. Теперь загрузите фото и видео.`,
     adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
@@ -310,6 +314,10 @@ const T = {
     adminAskSellerVideo: 'Отправьте видео-приветствие продавца:',
     adminSellerPhotoSaved: '✅ Фото сохранено.',
     adminSellerVideoSaved: '✅ Видео сохранено.',
+    adminBtnSyncSellers: (n) => `🆕 Новых сотрудников: ${n} — добавить`,
+    adminNoNewSellers: 'Новых сотрудников нет — все уже добавлены в продавцы.',
+    adminSyncSellersTitle: 'Выберите сотрудника, чтобы добавить его в продавцы:',
+    adminSellerAdded: (name) => `✅ ${esc(name)} добавлен(а) в продавцы. Теперь загрузите фото и видео.`,
     adminBtnAddAdmin: '👑 Добавить администратора',
     adminAddCollectionPrompt: 'Введите название новой коллекции (например «Осень-зима 26/27»):',
     adminCollectionAdded: (name) => `✅ Коллекция «${name}» добавлена.`,
@@ -632,6 +640,29 @@ async function getAllSellers() {
       video: (r[4] || '').trim() || null,
     }))
     .filter((s) => s.name && s.chatId);
+}
+
+async function appendSellerRow(name, chatId) {
+  const sheets = await getSheetsClient();
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEET_ID,
+    range: `${SELLERS_SHEET}!A:E`,
+    valueInputOption: 'RAW',
+    requestBody: { values: [[name, String(chatId), '', '', '']] },
+  });
+}
+
+// Список сотрудников из бота клиентской базы — оба бота используют один и тот же Redis
+async function getEmployeeRosterFromMainBot() {
+  const allowedUsers = (await redis.get('allowed_users')) || [];
+  const admins = (await redis.get('admins')) || [];
+  const allIds = Array.from(new Set([...allowedUsers, ...admins].map(String)));
+  const roster = [];
+  for (const id of allIds) {
+    const name = await redis.get(`employee_name:${id}`);
+    roster.push({ chatId: id, name: name || `ID ${id}` });
+  }
+  return roster;
 }
 
 async function getSellerByName(name) {
@@ -1525,15 +1556,48 @@ async function showAdminMenu(chatId, editMsgId) {
 
 async function showAdminSellers(chatId, page, editMsgId) {
   const sellers = await getAllSellers();
-  if (!sellers.length) return sendMessage(chatId, await t(chatId, 'noSellers'));
+  const existingIds = new Set(sellers.map((s) => String(s.chatId)));
+  const roster = await getEmployeeRosterFromMainBot();
+  const newOnes = roster.filter((r) => !existingIds.has(String(r.chatId)));
+
+  const rows = [];
+  if (newOnes.length) {
+    rows.push([{ text: await t(chatId, 'adminBtnSyncSellers', newOnes.length), callback_data: 'adm_selsync' }]);
+  }
+
+  if (!sellers.length && !newOnes.length) return sendMessage(chatId, await t(chatId, 'noSellers'));
+
   const { slice, totalPages } = paginate(sellers, page, PAGE_SIZE_LIST);
-  const rows = slice.map((s) => [{ text: s.name, callback_data: 'adm_sel_' + sellers.indexOf(s) }]);
+  rows.push(...slice.map((s) => [{ text: s.name, callback_data: 'adm_sel_' + sellers.indexOf(s) }]));
   rows.push(...paginationRow(page, totalPages, 'adm_selpg_' + (page - 1), 'adm_selpg_' + (page + 1)));
   rows.push([{ text: await t(chatId, 'adminBackToMenu'), callback_data: 'adm_menu' }]);
   const keyboard = { inline_keyboard: rows };
   const text = await t(chatId, 'adminSellersTitle');
   if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
   else await sendMessage(chatId, text, keyboard);
+}
+
+async function showAdminSyncSellers(chatId, editMsgId) {
+  const sellers = await getAllSellers();
+  const existingIds = new Set(sellers.map((s) => String(s.chatId)));
+  const roster = await getEmployeeRosterFromMainBot();
+  const newOnes = roster.filter((r) => !existingIds.has(String(r.chatId)));
+  if (!newOnes.length) return sendMessage(chatId, await t(chatId, 'adminNoNewSellers'));
+  const rows = newOnes.map((r) => [{ text: r.name, callback_data: 'adm_seladd_' + r.chatId }]);
+  rows.push([{ text: await t(chatId, 'adminBackToList'), callback_data: 'adm_sellers' }]);
+  const keyboard = { inline_keyboard: rows };
+  const text = await t(chatId, 'adminSyncSellersTitle');
+  if (editMsgId) await editMessageText(chatId, editMsgId, text, keyboard);
+  else await sendMessage(chatId, text, keyboard);
+}
+
+async function handleAdminAddSellerFromRoster(chatId, sellerChatId) {
+  const roster = await getEmployeeRosterFromMainBot();
+  const person = roster.find((r) => String(r.chatId) === String(sellerChatId));
+  if (!person) return;
+  await appendSellerRow(person.name, person.chatId);
+  await sendMessage(chatId, await t(chatId, 'adminSellerAdded', person.name));
+  await showAdminSellers(chatId, 0);
 }
 
 async function showAdminSellerCard(chatId, idx) {
@@ -1818,6 +1882,10 @@ async function handleCallback(cq) {
       await setAdminState(chatId, { step: 'selvideo', sellerIdx: Number(data.slice(13)) });
       await sendMessage(chatId, await t(chatId, 'adminAskSellerVideo'));
     }
+  } else if (data === 'adm_selsync') {
+    if (await isAdmin(chatId)) await showAdminSyncSellers(chatId, messageId);
+  } else if (data.startsWith('adm_seladd_')) {
+    if (await isAdmin(chatId)) await handleAdminAddSellerFromRoster(chatId, data.slice('adm_seladd_'.length));
   } else if (data.startsWith('adm_sel_')) {
     if (await isAdmin(chatId)) await showAdminSellerCard(chatId, Number(data.slice(8)));
   } else if (data === 'adm_addadmin') {
